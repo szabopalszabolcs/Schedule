@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -316,8 +315,12 @@ public class Utility {
         return true;
     }
 
-    public static Label createLabel(Activity currentActivity,Profesor profesor,ArrayList<Group> groups) {
-        Label lbl = new Label();
+    public static IndexedLabel createLabel(Activity currentActivity,Profesor profesor,ArrayList<Group> groups) {
+        int[] groupId=new int[groups.size()];
+        for (int i=0;i<groups.size();i++) {
+            groupId[i]=groups.get(i).getIdGroup();
+        }
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(),profesor.getIdProfesor(),groupId);
         lbl.setPrefSize(100, currentActivity.getTime()*50);
         lbl.setFont(Font.font(8));
         lbl.setTextAlignment(TextAlignment.CENTER);

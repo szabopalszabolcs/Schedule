@@ -9,7 +9,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -18,7 +17,7 @@ public class ScheduleProfesor {
     final int HOURS = 14, DAYS = 6;
     ArrayList<Activity> activities;
     ArrayList<Group> groups;
-    private Label draggingLabel;
+    private IndexedLabel draggingLabel;
     private final Profesor profesor;
     private Stage scheduleStage;
     private Stage classesStage;
@@ -50,7 +49,7 @@ public class ScheduleProfesor {
             }
         }
         StackPane[] classesArray=new StackPane[nrActivities];
-        int sqr=0;
+        int sqr;
         if (Math.floor((Math.sqrt(nrActivities)))==Math.sqrt(nrActivities)) {
             sqr = (int) Math.floor(Math.sqrt(nrActivities));
         }
@@ -61,7 +60,7 @@ public class ScheduleProfesor {
         for (int i=0;i<profesor.getActivitiesOfProfesor().length;i++) {
                 Activity currentActivity = activities.get(profesor.getActivitiesOfProfesor()[i]);
                 if (currentActivity.getSemester() == semester && !onSchedule(profesor.getActivitiesOfProfesor()[i])) {
-                    Label lbl = Utility.createLabel(currentActivity, profesor, groups);
+                    IndexedLabel lbl = Utility.createLabel(currentActivity, profesor, groups);
                     classesArray[count] = new StackPane();
                     classesArray[count].setPrefSize(100, currentActivity.getTime()*50);
                     classesArray[count].setAlignment(Pos.TOP_CENTER);
@@ -92,18 +91,12 @@ public class ScheduleProfesor {
         classesStage.setTitle(profesor.getName()+" semestrul "+semester);
         classesStage.show();
 
-
-
-
-
         scheduleStage=new Stage();
         scheduleStage.setOnCloseRequest(event -> classesStage.hide());
         ScrollPane scheduleRoot=new ScrollPane();
         GridPane scheduleGrid=new GridPane();
         StackPane scheduleMatrix[][]=new StackPane[HOURS+1][DAYS+1];
         Scene scheduleScene=new Scene(scheduleRoot);
-
-
 
     }
 
@@ -115,7 +108,7 @@ public class ScheduleProfesor {
         return false;
     }
 
-    private void dragTextArea(Label ta) {
+    private void dragTextArea(IndexedLabel ta) {
         ta.setOnDragDetected(e -> {
             Dragboard db = ta.startDragAndDrop(TransferMode.MOVE);
             db.setDragView(ta.snapshot(null, null));
@@ -135,11 +128,11 @@ public class ScheduleProfesor {
         });
         pane.setOnDragDropped(e -> {
             Dragboard db = e.getDragboard();
-            if (profesor.getIdProfesor()==getActivity(draggingLabel).getProfesor()) {
+            if (profesor.getIdProfesor()==draggingLabel.getProfesor()) {
                 if (db.hasContent(labelFormat)) {
                     int row = GridPane.getRowIndex(pane),
                             col = GridPane.getColumnIndex(pane);
-                    Activity activity = getActivity(draggingLabel);
+                    Activity activity = activities.get(draggingLabel.getActivity());
                     int time=activity.getTime();
                     if (isMovable(col, row, activity)) {
                         ((Pane) draggingLabel.getParent()).getChildren().remove(draggingLabel);
@@ -175,7 +168,7 @@ public class ScheduleProfesor {
             if (db.hasContent(labelFormat)) {
                 ((Pane)draggingLabel.getParent()).getChildren().remove(draggingLabel);
                 pane.getChildren().add(draggingLabel);
-                Activity activity=getActivity(draggingLabel);
+                Activity activity=activities.get(draggingLabel.getActivity());
                 for (int i=0;i<HOURS;i++)
                     for (int j=0;j<DAYS;j++)
                         try{
@@ -207,7 +200,7 @@ public class ScheduleProfesor {
         return false;
     }
 
-    private Activity getActivity(Label lbl){
+/*    private Activity getActivity(Label lbl){
         int nrOfActivities=profesor.getActivitiesOfProfesor().length;
         for (int i=0;i<nrOfActivities;i++){
             if (lbl.getText().equals(Utility.createLabel(activities.get(profesor.getActivitiesOfProfesor()[i]),profesor,groups).getText()))
@@ -215,5 +208,5 @@ public class ScheduleProfesor {
         }
         return null;
     }
-
+*/
 }
