@@ -55,7 +55,7 @@ public class MainMenu {
         chooseProfesor.setOnAction(event -> {
             try{
                 int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
-                ScheduleProfesor profSchedule=new ScheduleProfesor(profesors.get(indexSelected),semesterCombo.getSelectionModel().getSelectedItem(),activities,groups);
+                ProfessorsClasses profSchedule=new ProfessorsClasses(profesors.get(indexSelected),semesterCombo.getSelectionModel().getSelectedItem(),activities,groups);
                 profSchedule.generateScene();
             }
             catch (Exception ex){
