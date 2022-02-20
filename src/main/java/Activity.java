@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 public class Activity {
 
-    private int idActivity;
+    private final int idActivity;
     private final String subject;
     private final String codeSubject;
     private final int profesor;

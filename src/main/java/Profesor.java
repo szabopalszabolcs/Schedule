@@ -7,7 +7,7 @@ public class Profesor {
     private int[] activitiesOfProfesor;
 
     public Profesor(int id,String name){
-        final int DAYS=6,HOURS=14;
+        final int DAYS=12,HOURS=7;
         this.idProfesor = id;
         this.name = name;
         String[] names=name.split(" ");

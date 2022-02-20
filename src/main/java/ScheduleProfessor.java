@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class ScheduleProfessor {
 
-    final int HOURS = 14, DAYS = 6;
+    final int HOURS = 7, DAYS = 12;
     ArrayList<Activity> activities;
     ArrayList<Group> groups;
     private IndexedLabel draggingLabel;
@@ -38,6 +38,8 @@ public class ScheduleProfessor {
         GridPane scheduleGrid=new GridPane();
         StackPane scheduleMatrix[][]=new StackPane[HOURS+1][DAYS+1];
         Scene scheduleScene=new Scene(scheduleRoot);
+
+
 
     }
 

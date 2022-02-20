@@ -6,7 +6,7 @@ public class Group {
     private int[] activitiesOfGroup;
 
     public Group(int id,String speciality,int year,int groupNumber){
-        final int DAYS = 6,HOURS = 14;
+        final int DAYS = 12,HOURS = 7;
         this.idGroup=id;
         this.groupName=speciality+year+groupNumber;
         this.scheduleGroup =new int[2][DAYS][HOURS];
@@ -50,15 +50,11 @@ public class Group {
     }
     public void addActivity (int activity) {
         int size=activitiesOfGroup.length;
-        int[] newActivites=new int[size+1];
-        for (int i=0;i<size;i++) {
-            newActivites[i] = activitiesOfGroup[i];
-        }
-        newActivites[size]=activity;
+        int[] newActivities=new int[size+1];
+        System.arraycopy(activitiesOfGroup, 0, newActivities, 0, size);
+        newActivities[size]=activity;
         activitiesOfGroup=new int[size+1];
-        for(int i=0;i<size+1;i++) {
-            activitiesOfGroup[i]=newActivites[i];
-        }
+        System.arraycopy(newActivities, 0, activitiesOfGroup, 0, size + 1);
     }
 
     public boolean removeActivity (int activity) {
@@ -78,9 +74,7 @@ public class Group {
             }
         }
         activitiesOfGroup = new int[size-1];
-        for (int i=0;i<size-1;i++) {
-            activitiesOfGroup[i]=newActivities[i];
-        }
+        if (size - 1 >= 0) System.arraycopy(newActivities, 0, activitiesOfGroup, 0, size - 1);
         return true;
     }
 
