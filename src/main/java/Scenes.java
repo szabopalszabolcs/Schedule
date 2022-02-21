@@ -57,7 +57,7 @@ public class Scenes {
                 classesArray[count] = new StackPane();
                 classesArray[count].setMinSize(40,40);
                 classesArray[count].setAlignment(Pos.CENTER);
-                addDropHandlingClasses(classesArray[count]);
+                addDropHandlingClasses(classesArray[count],professorId);
                 classesArray[count].getChildren().add(lbl);
                 classesGrid.add(classesArray[count], count % sqr, count / sqr);
                 dragTextArea(lbl);
@@ -70,7 +70,7 @@ public class Scenes {
                 StackPane pane = new StackPane();
                 pane.setMinSize(40, 40);
                 pane.setAlignment(Pos.CENTER);
-                addDropHandlingClasses(pane);
+                addDropHandlingClasses(pane,professorId);
                 classesGrid.add(pane, i % sqr, i / sqr);
             }
         }
@@ -104,7 +104,7 @@ public class Scenes {
         });
     }
 
-    private void addDropHandlingClasses(StackPane pane) {
+    private void addDropHandlingClasses(StackPane pane,int professorId) {
         pane.setOnDragOver(e -> {
             Dragboard db = e.getDragboard();
             if (db.hasContent(labelFormat)&&pane.getChildren().isEmpty()) {
@@ -113,12 +113,12 @@ public class Scenes {
         });
         pane.setOnDragDropped(e -> {
             Dragboard db = e.getDragboard();
-            //Activity activity=activities.get(Integer.parseInt((String) db.getContent(labelFormat)));
-            if (db.hasContent(labelFormat)) {
+            if (draggingLabel.getProfessorId()==professorId) {
                 ((Pane) draggingLabel.getParent()).getChildren().remove(draggingLabel);
                 pane.getChildren().add(draggingLabel);
                 e.setDropCompleted(true);
                 dragTextArea(draggingLabel);
+                e.setDropCompleted(true);
             }
         });
     }

@@ -3,40 +3,40 @@ import javafx.scene.control.Label;
 
 public class IndexedLabel extends Label {
 
-    private int activity;
-    private int profesor;
-    private int[] groups;
+    private int activityId;
+    private int professorId;
+    private int[] groupsId;
 
     public IndexedLabel() { }
 
-    public IndexedLabel(int activity,int profesor,int[] groups) {
-        this.activity=activity;
-        this.profesor=profesor;
-        this.groups=groups;
+    public IndexedLabel(int activityId, int professorId, int[] groupsId) {
+        this.activityId = activityId;
+        this.professorId = professorId;
+        this.groupsId = groupsId;
     }
 
-    public int getActivity() {
-        return activity;
+    public int getActivityId() {
+        return activityId;
     }
 
-    public void setActivity(int activity) {
-        this.activity = activity;
+    public void setActivityId(int activityId) {
+        this.activityId = activityId;
     }
 
-    public int getProfesor() {
-        return profesor;
+    public int getProfessorId() {
+        return professorId;
     }
 
-    public void setProfesor(int profesor) {
-        this.profesor = profesor;
+    public void setProfessorId(int professorId) {
+        this.professorId = professorId;
     }
 
-    public int[] getGroups() {
-        return groups;
+    public int[] getGroupsId() {
+        return groupsId;
     }
 
-    public void setGroups(int[] groups) {
-        this.groups = groups;
+    public void setGroupsId(int[] groupsId) {
+        this.groupsId = groupsId;
     }
 
 }
