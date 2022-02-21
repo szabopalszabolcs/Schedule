@@ -7,9 +7,10 @@ import java.util.ArrayList;
 
 public class MainMenu {
 
-    ArrayList<Profesor> profesors = new ArrayList<>();
+    ArrayList<Professor> professors = new ArrayList<>();
     ArrayList<Group> groups = new ArrayList<>();
     ArrayList<Activity> activities = new ArrayList<>();
+    Scenes scenes;
 
     public void createMainMenu() {
 
@@ -37,26 +38,25 @@ public class MainMenu {
         Button loadData=new Button("Load Data");
         readFile.setOnAction(event -> {
             readFileText.setText("Please wait ... reading data");
-            activities = Utility.readXls(file, profesors, groups, faculty);
+            activities = Utility.readXls(file, professors, groups, faculty);
             if (activities!=null) {
                 profCombo.getItems().clear();
                 groupCombo.getItems().clear();
                 readFileText.setText("Data read ok");
-                for (Profesor profesor : profesors) {
-                    profCombo.getItems().add(profesor.getIdProfesor()+" "+profesor.getName());
+                for (Professor professor : professors) {
+                    profCombo.getItems().add(professor.getIdProfesor()+" "+ professor.getName());
                 }
                 for (Group group:groups){
                     groupCombo.getItems().add(group.getIdGroup()+" "+group.getGroupName());
                 }
-                //for (Activity a:activities){ System.out.println(a);}
+                scenes =new Scenes(professors,activities,groups);
             }
             else readFileText.setText("Data read failure");
         });
         chooseProfesor.setOnAction(event -> {
             try{
                 int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
-                ProfessorsClasses profSchedule=new ProfessorsClasses(profesors.get(indexSelected),semesterCombo.getSelectionModel().getSelectedItem(),activities,groups);
-                profSchedule.generateScene();
+                scenes.professorsClassesScene(indexSelected,semesterCombo.getSelectionModel().getSelectedItem());
             }
             catch (Exception ex){
                 System.out.println("Can't generate scene");
@@ -74,7 +74,7 @@ public class MainMenu {
         });
  */       saveData.setOnAction(event -> {
             try {
-                boolean ok=Utility.saveData("data/savedfile",profesors,groups,activities);
+                boolean ok=Utility.saveData("data/savedfile", professors,groups,activities);
             }
             catch (Exception ex){
                 System.out.println("Saving failed");

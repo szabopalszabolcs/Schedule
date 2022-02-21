@@ -38,23 +38,23 @@ public class Utility {
         return group;
     }
 
-    static Profesor addIfNotInProfs(Profesor profesor,ArrayList<Profesor> profesors) {
-        for (Profesor nextProfesor:profesors) {
-            if (profesor.getName().equals(nextProfesor.getName())) {
-                return nextProfesor;
+    static Professor addIfNotInProfs(Professor professor, ArrayList<Professor> professors) {
+        for (Professor nextProfessor : professors) {
+            if (professor.getName().equals(nextProfessor.getName())) {
+                return nextProfessor;
             }
         }
-        profesor.setIdProfesor(profIndex);
-        profesors.add(profesor);
+        professor.setIdProfesor(profIndex);
+        professors.add(professor);
         profIndex++;
-        return profesor;
+        return professor;
     }
 
     static void errorMessage(String message){
         System.out.println(message);
     }
 
-    static void createActivities(ArrayList<Activity> activities,ArrayList<Profesor> profesors, ArrayList<Group> groups,int profNumber,int numberOfGroups,int fAct,Group[][] actualGroups,String subject,String codeSubject,Profesor[] actualProfs,int type,int semester,int year,int actTotal,int[] actTime,int numberOfCourses) {
+    static void createActivities(ArrayList<Activity> activities, ArrayList<Professor> professors, ArrayList<Group> groups, int profNumber, int numberOfGroups, int fAct, Group[][] actualGroups, String subject, String codeSubject, Professor[] actualProfs, int type, int semester, int year, int actTotal, int[] actTime, int numberOfCourses) {
         float nrAct=(float) fAct*actTime[profNumber]/actTotal;
         for (int j = 0; j < nrAct ; j++) {
             int groupTeam = (numberOfGroups/fAct);
@@ -76,7 +76,7 @@ public class Utility {
             if (nrAct<1)
                 activityTime=(float) fAct/actTotal;
             else
-                activityTime=(float) actTotal/fAct;
+                activityTime=(float) actTotal/fAct/2;
             activityTime*=2;
             Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfesor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
             if(numberOfCourses==-1){
@@ -87,7 +87,7 @@ public class Utility {
                 }
             }
             activities.add(newActivity);
-            profesors.get(newActivity.getProfesor()).addActivity(activities.indexOf(newActivity));
+            professors.get(newActivity.getProfesor()).addActivity(activities.indexOf(newActivity));
             activityIndex++;
             for (int group : newActivity.getGroups()) {
                 groups.get(group).addActivity(activities.indexOf(newActivity));
@@ -97,11 +97,11 @@ public class Utility {
 
     }
 
-    public static ArrayList<Activity> readXls(String fileName, ArrayList<Profesor> profesors, ArrayList<Group> groups, String faculty){
+    public static ArrayList<Activity> readXls(String fileName, ArrayList<Professor> professors, ArrayList<Group> groups, String faculty){
 
         ArrayList<Activity> activities=new ArrayList<>();
         File file=new File(fileName);
-        profesors.clear();
+        professors.clear();
         groups.clear();
         profIndex=0;
         groupIndex=0;
@@ -127,141 +127,144 @@ public class Utility {
 
     //start row
 
-            int r=342;
-            while (!hssfSheet.getRow(r).getCell(1).toString().equals("")&&(r<346)){
+            int r=10;
+            while (!hssfSheet.getRow(r).getCell(1).toString().equals("")/*&&(r<346)*/){
                 Row firstRow=hssfSheet.getRow(r);
 
                 if (faculty.equals(firstRow.getCell(2).toString())){
                     String ok=firstRow.getCell(17).toString();
-                    if (ok.equals("ok")){
-                        Row secondRow=hssfSheet.getRow(r+1);
-                        String subject=firstRow.getCell(1).toString().trim();
-                        String departament=firstRow.getCell(4).toString().trim();
+                    if (ok.equals("ok")) {
+                        Row secondRow = hssfSheet.getRow(r + 1);
+                        String subject = firstRow.getCell(1).toString().trim();
+                        String departament = firstRow.getCell(4).toString().trim();
                         String[] speciality = firstRow.getCell(5).toString().split("\\+");
-                        for (String spec:speciality)
+                        for (String spec : speciality)
                             System.out.println(spec);
-                        int year=(int) firstRow.getCell(6).getNumericCellValue();
-                        String[] codeFormation=secondRow.getCell(1).toString().split(",");
-                        String codeSubject=codeFormation[0];
-                        int fCrs=Integer.parseInt(codeFormation[1]);
-                        int fSem=Integer.parseInt(codeFormation[2]);
-                        int fLab=Integer.parseInt(codeFormation[3]);
-                        int fPrc=Integer.parseInt(codeFormation[4]);
-                        int s1C,s1S,s1L,s1P,s2C,s2S,s2L,s2P;
-                        if (secondRow.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s1C=(int) secondRow.getCell(8).getNumericCellValue();
-                        else s1C=0;
-                        if (secondRow.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s1S=(int) secondRow.getCell(9).getNumericCellValue();
-                        else s1S=0;
-                        if (secondRow.getCell(10, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s1L=(int) secondRow.getCell(10).getNumericCellValue();
-                        else s1L=0;
-                        if (secondRow.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s1P=(int) secondRow.getCell(11).getNumericCellValue();
-                        else s1P=0;
-                        if (secondRow.getCell(13, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s2C=(int) secondRow.getCell(13).getNumericCellValue();
-                        else s2C=0;
-                        if (secondRow.getCell(14, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s2S=(int) secondRow.getCell(14).getNumericCellValue();
-                        else s2S=0;
-                        if (secondRow.getCell(15, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s2L=(int) secondRow.getCell(15).getNumericCellValue();
-                        else s2L=0;
-                        if (secondRow.getCell(16, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)!=null)
-                            s2P=(int) secondRow.getCell(16).getNumericCellValue();
-                        else s2P=0;
-                        int semester=0;
-                        if (s1C+s1S+s1L+s1P>0) semester=1;
-                        else if (s2C+s2S+s2L+s2P>0) semester=2;
+                        int year = (int) firstRow.getCell(6).getNumericCellValue();
+                        String[] codeFormation = secondRow.getCell(1).toString().split(",");
+                        String codeSubject = codeFormation[0];
+                        int fCrs = Integer.parseInt(codeFormation[1]);
+                        int fSem = Integer.parseInt(codeFormation[2]);
+                        int fLab = Integer.parseInt(codeFormation[3]);
+                        int fPrc = Integer.parseInt(codeFormation[4]);
+                        int s1C, s1S, s1L, s1P, s2C, s2S, s2L, s2P;
+                        if (secondRow.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s1C = (int) secondRow.getCell(8).getNumericCellValue();
+                        else s1C = 0;
+                        if (secondRow.getCell(9, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s1S = (int) secondRow.getCell(9).getNumericCellValue();
+                        else s1S = 0;
+                        if (secondRow.getCell(10, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s1L = (int) secondRow.getCell(10).getNumericCellValue();
+                        else s1L = 0;
+                        if (secondRow.getCell(11, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s1P = (int) secondRow.getCell(11).getNumericCellValue();
+                        else s1P = 0;
+                        if (secondRow.getCell(13, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s2C = (int) secondRow.getCell(13).getNumericCellValue();
+                        else s2C = 0;
+                        if (secondRow.getCell(14, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s2S = (int) secondRow.getCell(14).getNumericCellValue();
+                        else s2S = 0;
+                        if (secondRow.getCell(15, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s2L = (int) secondRow.getCell(15).getNumericCellValue();
+                        else s2L = 0;
+                        if (secondRow.getCell(16, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
+                            s2P = (int) secondRow.getCell(16).getNumericCellValue();
+                        else s2P = 0;
+                        int semester = 0;
+                        if (s1C + s1S + s1L + s1P > 0) semester = 1;
+                        else if (s2C + s2S + s2L + s2P > 0) semester = 2;
 //profesori care predau la aceasta disciplina si grupe
-                        int c = 27;
-                        while (!secondRow.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).toString().equals("")){
-                            c++;
-                        }
-                        int nrProfs=c-27;
-                        Profesor[] actualProfs=new Profesor[nrProfs];
-                        String[] profNames=new String[nrProfs];
-                        int[] crsTime=new int[nrProfs];
-                        int[] semTime=new int[nrProfs];
-                        int[] labTime=new int[nrProfs];
-                        int[] prcTime=new int[nrProfs];
-                        int crsTotal=0;
-                        int semTotal=0;
-                        int labTotal=0;
-                        int prcTotal=0;
+                        if (semester > 0) {
+                            int c = 27;
+                            while (!secondRow.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).toString().equals("")) {
+                                c++;
+                            }
+                            int nrProfs = c - 27;
+                            if (nrProfs > 0) {
+                                Professor[] actualProfs = new Professor[nrProfs];
+                                String[] profNames = new String[nrProfs];
+                                int[] crsTime = new int[nrProfs];
+                                int[] semTime = new int[nrProfs];
+                                int[] labTime = new int[nrProfs];
+                                int[] prcTime = new int[nrProfs];
+                                int crsTotal = 0;
+                                int semTotal = 0;
+                                int labTotal = 0;
+                                int prcTotal = 0;
 
-                        for (int i=0;i<nrProfs;i++) {
-                            String[] profData = secondRow.getCell(27 + i).toString().split(";");
-                            profNames[i] = profData[0];
-                            crsTime[i] = Integer.parseInt(profData[1]);
-                            crsTotal += crsTime[i];
-                            semTime[i] = Integer.parseInt(profData[2]);
-                            semTotal += semTime[i];
-                            labTime[i] = Integer.parseInt(profData[3]);
-                            labTotal += labTime[i];
-                            prcTime[i] = Integer.parseInt(profData[4]);
-                            prcTotal += prcTime[i];
-                            actualProfs[i]=new Profesor(0,profNames[i]);
-                            actualProfs[i]=addIfNotInProfs(actualProfs[i],profesors);
-                        }
-
-                        for (int i=0;i<nrProfs;i++){
-                            for (int j=i+1;j<nrProfs;j++)
-                                if (actualProfs[i]!=null&&actualProfs[j]!=null&&actualProfs[i].equals(actualProfs[j])) {
-                                    crsTime[i]+=crsTime[j];
-                                    crsTime[j]=0;
-                                    semTime[i]+=semTime[j];
-                                    semTime[j]=0;
-                                    labTime[i]+=labTime[j];
-                                    labTime[j]=0;
-                                    prcTime[i]+=prcTime[j];
-                                    prcTime[j]=0;
-                                    actualProfs[j]=null;
+                                for (int i = 0; i < nrProfs; i++) {
+                                    String[] profData = secondRow.getCell(27 + i).toString().split(";");
+                                    profNames[i] = profData[0];
+                                    crsTime[i] = Integer.parseInt(profData[1]);
+                                    crsTotal += crsTime[i];
+                                    semTime[i] = Integer.parseInt(profData[2]);
+                                    semTotal += semTime[i];
+                                    labTime[i] = Integer.parseInt(profData[3]);
+                                    labTotal += labTime[i];
+                                    prcTime[i] = Integer.parseInt(profData[4]);
+                                    prcTotal += prcTime[i];
+                                    actualProfs[i] = new Professor(0, profNames[i]);
+                                    actualProfs[i] = addIfNotInProfs(actualProfs[i], professors);
                                 }
-                        }
 
-                        int numberOfGroups=max(fCrs,fSem,fLab,fPrc);
-                        Group[][] actualGroups=new Group[4][numberOfGroups*nrProfs];
+                                for (int i = 0; i < nrProfs; i++) {
+                                    for (int j = i + 1; j < nrProfs; j++)
+                                        if (actualProfs[i] != null && actualProfs[j] != null && actualProfs[i].equals(actualProfs[j])) {
+                                            crsTime[i] += crsTime[j];
+                                            crsTime[j] = 0;
+                                            semTime[i] += semTime[j];
+                                            semTime[j] = 0;
+                                            labTime[i] += labTime[j];
+                                            labTime[j] = 0;
+                                            prcTime[i] += prcTime[j];
+                                            prcTime[j] = 0;
+                                            actualProfs[j] = null;
+                                        }
+                                }
 
-                        for (int i=0;i<numberOfGroups;i++) {
-                            actualGroups[0][i] = new Group(0,departament + speciality[0], year, i + 1);
-                            actualGroups[0][i] = addIfNotInGroup(actualGroups[0][i], groups);
-                            for (int j=1;j<4;j++) {
-                                actualGroups[j][i]=actualGroups[0][i];
-                            }
-                        }
-                        for (int i=1;i<nrProfs;i++) {
-                            for (int k=0;k<numberOfGroups;k++) {
-                                for (int j=0;j<4;j++) {
-                                    actualGroups[j][i * numberOfGroups+k] = actualGroups[j][k];
+                                int numberOfGroups = max(fCrs, fSem, fLab, fPrc);
+                                Group[][] actualGroups = new Group[4][numberOfGroups * nrProfs];
+
+                                for (int i = 0; i < numberOfGroups; i++) {
+                                    actualGroups[0][i] = new Group(0, departament + speciality[0], year, i + 1);
+                                    actualGroups[0][i] = addIfNotInGroup(actualGroups[0][i], groups);
+                                    for (int j = 1; j < 4; j++) {
+                                        actualGroups[j][i] = actualGroups[0][i];
+                                    }
+                                }
+                                for (int i = 1; i < nrProfs; i++) {
+                                    for (int k = 0; k < numberOfGroups; k++) {
+                                        for (int j = 0; j < 4; j++) {
+                                            actualGroups[j][i * numberOfGroups + k] = actualGroups[j][k];
+                                        }
+                                    }
+                                }
+
+                                for (int i = 0; i < nrProfs; i++) {
+                                    if (crsTime[i] > 0) {
+                                        int type = 1;
+                                        createActivities(activities, professors, groups, i, numberOfGroups, fCrs, actualGroups, subject, codeSubject, actualProfs, type, semester, year, crsTotal, crsTime, s1C + s2C);
+                                    }
+                                    if (semTime[i] > 0) {
+                                        int type = 2;
+                                        createActivities(activities, professors, groups, i, numberOfGroups, fSem, actualGroups, subject, codeSubject, actualProfs, type, semester, year, semTotal, semTime, s1C + s2C);
+                                    }
+                                    if (labTime[i] > 0) {
+                                        int type = 3;
+                                        createActivities(activities, professors, groups, i, numberOfGroups, fLab, actualGroups, subject, codeSubject, actualProfs, type, semester, year, labTotal, labTime, s1C + s2C + 1);
+                                    }
+                                    if (prcTime[i] > 0) {
+                                        int type = 4;
+                                        createActivities(activities, professors, groups, i, numberOfGroups, fPrc, actualGroups, subject, codeSubject, actualProfs, type, semester, year, prcTotal, prcTime, s1C + s2C + 1);
+                                    }
+                                }
+                                if (s1C + s2C == 0) {
+                                    System.out.println("No course here " + subject);
                                 }
                             }
                         }
-
-                        for (int i=0;i<nrProfs;i++){
-                            if (crsTime[i]>0) {
-                                int type=1;
-                                createActivities(activities,profesors,groups,i,numberOfGroups,fCrs,actualGroups,subject,codeSubject,actualProfs,type,semester,year,crsTotal,crsTime,s1C+s2C);
-                            }
-                            if (semTime[i]>0) {
-                                int type=2;
-                                createActivities(activities,profesors,groups,i,numberOfGroups,fSem,actualGroups,subject,codeSubject,actualProfs,type,semester,year,semTotal,semTime,s1C+s2C);
-                            }
-                            if (labTime[i]>0) {
-                                int type = 3;
-                                createActivities(activities,profesors,groups,i,numberOfGroups,fLab,actualGroups,subject,codeSubject,actualProfs,type,semester,year,labTotal,labTime,s1C+s2C+1);
-                            }
-                            if (prcTime[i]>0) {
-                                int type = 4;
-                                createActivities(activities,profesors,groups,i,numberOfGroups,fPrc,actualGroups,subject,codeSubject,actualProfs,type,semester,year,prcTotal,prcTime,s1C+s2C+1);
-                            }
-                        }
-                        if (s1C+s2C==0) {
-                            System.out.println("No course here "+subject);
-                        }
-
                     }
                 }
                 r=r+2;
@@ -294,7 +297,7 @@ public class Utility {
         return true;
     }
 */
-    public static boolean saveData(String file,ArrayList<Profesor> profesors,ArrayList<Group> groups,ArrayList<Activity> activities) throws IOException {
+    public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) throws IOException {
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -303,7 +306,7 @@ public class Utility {
 
         try {
             gson.toJson(activities,fileWriter);
-            gson.toJson(profesors,fileWriter);
+            gson.toJson(professors,fileWriter);
             gson.toJson(groups,fileWriter);
             System.out.println("Date salvate");
             fileWriter.close();
@@ -315,13 +318,20 @@ public class Utility {
         return true;
     }
 
-    public static IndexedLabel createLabel(Activity currentActivity,Profesor profesor,ArrayList<Group> groups) {
+    public static IndexedLabel createLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
         int[] groupId=new int[groups.size()];
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
         }
-        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(),profesor.getIdProfesor(),groupId);
-        lbl.setPrefSize(100, currentActivity.getTime()*50);
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
+        int time=currentActivity.getTime();
+        if (time==1) {
+            lbl.setPrefSize(80, 40);
+        }
+        else {
+            lbl.setPrefSize((time+1)/2*80,80);
+        }
+        //if (currentActivity.getTime()>=2) lbl.setPrefSize(80, currentActivity.getTime()*40);
         lbl.setFont(Font.font(8));
         lbl.setTextAlignment(TextAlignment.CENTER);
         lbl.setAlignment(Pos.CENTER);
@@ -331,7 +341,7 @@ public class Utility {
         for (int g=0;g<currentActivity.getGroups().length;g++){
             groupsNames.append(groups.get(currentActivity.getGroups()[g]).getGroupName()).append(" ");
         }
-        lbl.setText(profesor.getShortName()+"\n"+currentActivity.getCodeSubject()+"\n"+
+        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject()+"\n"+
                 groupsNames);
         switch (currentActivity.getType()) {
             case 1:
