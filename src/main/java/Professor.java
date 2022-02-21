@@ -7,18 +7,18 @@ public class Professor {
     private int[] activitiesOfProfesor;
 
     public Professor(int id, String name){
-        final int DAYS=12,HOURS=7;
+        final int HOURS=7,DAYS=12;
         this.idProfesor = id;
         this.name = name;
         String[] names=name.split(" ");
         this.shortName = names[0].substring(0,1)+names[0].substring(1).toLowerCase();
         for (int i=1;i<names.length;i++){
-            this.shortName=this.shortName+"_"+names[i].substring(0,1);
+            this.shortName += "_" + names[i].substring(0, 1);
         }
-        this.scheduleProfesor = new int[2][DAYS][HOURS];
+        this.scheduleProfesor = new int[2][HOURS][DAYS];
         for(int i=0;i<2;i++)
-            for(int j=0;j<DAYS;j++)
-                for(int k=0;k<HOURS;k++)
+            for(int j=0;j<HOURS;j++)
+                for(int k=0;k<DAYS;k++)
                     scheduleProfesor[i][j][k]=-1;
         activitiesOfProfesor = new int[0];
     }
@@ -33,18 +33,18 @@ public class Professor {
 
     public int[] getActivitiesOfProfesor() { return activitiesOfProfesor; }
 
-    public int getActivityProfesor(int semester,int day,int hour) {
+    public int getActivityProfesor(int semester,int hour,int day) {
         try {
-            return scheduleProfesor[semester-1][day][hour];
+            return scheduleProfesor[semester-1][hour][day];
         }
         catch (Exception ex) {
             return -1;
         }
     }
 
-    public boolean setActivityProfesor(int semester,int col,int row,int activity) {
+    public boolean setActivityProfesor(int semester,int hour,int day,int activity) {
         try {
-            scheduleProfesor[semester-1][col][row]=activity;
+            scheduleProfesor[semester-1][hour][day]=activity;
             return true;
         }
         catch (Exception ex){
@@ -56,14 +56,10 @@ public class Professor {
     public void addActivity (int activity) {
         int size=activitiesOfProfesor.length;
         int[] newActivites=new int[size+1];
-        for (int i=0;i<size;i++) {
-            newActivites[i] = activitiesOfProfesor[i];
-        }
+        System.arraycopy(activitiesOfProfesor, 0, newActivites, 0, size);
         newActivites[size]=activity;
         activitiesOfProfesor=new int[size+1];
-        for(int i=0;i<size+1;i++) {
-            activitiesOfProfesor[i]=newActivites[i];
-        }
+        System.arraycopy(newActivites, 0, activitiesOfProfesor, 0, size + 1);
     }
 
     public boolean removeActivity (int activity) {
@@ -83,9 +79,7 @@ public class Professor {
             }
         }
         activitiesOfProfesor = new int[size-1];
-        for (int i=0;i<size-1;i++) {
-            activitiesOfProfesor[i]=newActivities[i];
-        }
+        if (size - 1 >= 0) System.arraycopy(newActivities, 0, activitiesOfProfesor, 0, size - 1);
         return true;
     }
 

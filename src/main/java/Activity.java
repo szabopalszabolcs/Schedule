@@ -6,21 +6,21 @@ public class Activity {
     private final int idActivity;
     private final String subject;
     private final String codeSubject;
-    private final int profesor;
+    private final int professorId;
     private final int type;
-    private int[] groups;
+    private int[] groupsId;
     private final int semester;
     private final int yearOfStudy;
     private final int time;
     private final boolean weekly;
 
-    public Activity(int idActivity,String subject, String codeSubject, int profesor, int tip, int[] groups, int semester, int yearOfStudy, int time, boolean weekly){
+    public Activity(int idActivity, String subject, String codeSubject, int professorId, int tip, int[] groupsId, int semester, int yearOfStudy, int time, boolean weekly){
         this.idActivity=idActivity;
         this.subject = subject;
         this.codeSubject = codeSubject;
-        this.profesor =profesor;
+        this.professorId = professorId;
         this.type =tip;
-        this.groups = groups;
+        this.groupsId = groupsId;
         this.semester = semester;
         this.yearOfStudy = yearOfStudy;
         this.time = time;
@@ -33,8 +33,8 @@ public class Activity {
                 "-" + subject +
                 "," + codeSubject +
                 "," + type +
-                "," + profesor +
-                "," + Arrays.toString(groups) +
+                "," + professorId +
+                "," + Arrays.toString(groupsId) +
                 ", semestru=" + semester +
                 ", an=" + yearOfStudy +
                 ", durata=" + time +
@@ -44,7 +44,7 @@ public class Activity {
     public void addGroups(Group[] newGroups){
 
         ArrayList<Integer> groupsToAdd=new ArrayList<>();
-        for (int idGroup : groups) {
+        for (int idGroup : groupsId) {
             groupsToAdd.add(idGroup);
             for (Group newGroup : newGroups) {
                 if (newGroup.getIdGroup()==idGroup) {
@@ -60,7 +60,7 @@ public class Activity {
         int[] newGroup=new int[groupsToAdd.size()];
         for (int i=0;i<newGroup.length;i++)
             newGroup[i] = groupsToAdd.get(i);
-        groups= newGroup;
+        groupsId = newGroup;
 
     }
 
@@ -78,9 +78,9 @@ public class Activity {
         return type;
     }
 
-    public int getProfesor() { return profesor; }
+    public int getProfessorId() { return professorId; }
 
-    public int[] getGroups() {return groups; }
+    public int[] getGroupsId() {return groupsId; }
 
     public int getSemester() { return semester; }
 

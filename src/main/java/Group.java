@@ -6,13 +6,13 @@ public class Group {
     private int[] activitiesOfGroup;
 
     public Group(int id,String speciality,int year,int groupNumber){
-        final int DAYS = 12,HOURS = 7;
+        final int HOURS = 7,DAYS = 12;
         this.idGroup=id;
         this.groupName=speciality+year+groupNumber;
-        this.scheduleGroup =new int[2][DAYS][HOURS];
+        this.scheduleGroup =new int[2][HOURS][DAYS];
         for(int i=0;i<2;i++)
-            for(int j=0;j<DAYS;j++)
-                for(int k=0;k<HOURS;k++)
+            for(int j=0;j<HOURS;j++)
+                for(int k=0;k<DAYS;k++)
                     scheduleGroup[i][j][k]=-1;
         activitiesOfGroup = new int[0];
     }
@@ -29,18 +29,18 @@ public class Group {
 
     public void setIdGroup(int id) { this.idGroup=id; }
 
-    public int getActivityGroup(int semester,int col,int row){
+    public int getActivityGroup(int semester,int hour,int day){
         try {
-            return scheduleGroup[semester-1][col][row];
+            return scheduleGroup[semester-1][hour][day];
         }
         catch (Exception ex) {
             return -1;
         }
     }
 
-    public boolean setActivityGroup(int semester,int col,int row, int activity) {
+    public boolean setActivityGroup(int semester,int hour,int day, int activity) {
         try {
-            scheduleGroup[semester-1][col][row]=activity;
+            scheduleGroup[semester-1][hour][day]=activity;
             return true;
         }
         catch (Exception ex){

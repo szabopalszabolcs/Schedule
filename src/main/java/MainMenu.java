@@ -56,7 +56,9 @@ public class MainMenu {
         chooseProfesor.setOnAction(event -> {
             try{
                 int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
-                scenes.professorsClassesScene(indexSelected,semesterCombo.getSelectionModel().getSelectedItem());
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                scenes.professorsClassesScene(indexSelected,semester);
+                scenes.professorsScheduleScene(indexSelected,semester);
             }
             catch (Exception ex){
                 System.out.println("Can't generate scene");

@@ -87,9 +87,9 @@ public class Utility {
                 }
             }
             activities.add(newActivity);
-            professors.get(newActivity.getProfesor()).addActivity(activities.indexOf(newActivity));
+            professors.get(newActivity.getProfessorId()).addActivity(activities.indexOf(newActivity));
             activityIndex++;
-            for (int group : newActivity.getGroups()) {
+            for (int group : newActivity.getGroupsId()) {
                 groups.get(group).addActivity(activities.indexOf(newActivity));
             }
             System.out.println(newActivity);
@@ -331,15 +331,14 @@ public class Utility {
         else {
             lbl.setPrefSize((time+1)/2*80,80);
         }
-        //if (currentActivity.getTime()>=2) lbl.setPrefSize(80, currentActivity.getTime()*40);
         lbl.setFont(Font.font(8));
         lbl.setTextAlignment(TextAlignment.CENTER);
         lbl.setAlignment(Pos.CENTER);
         lbl.setWrapText(true);
         lbl.setStyle("-fx-border:black;");
         StringBuilder groupsNames= new StringBuilder();
-        for (int g=0;g<currentActivity.getGroups().length;g++){
-            groupsNames.append(groups.get(currentActivity.getGroups()[g]).getGroupName()).append(" ");
+        for (int g = 0; g<currentActivity.getGroupsId().length; g++){
+            groupsNames.append(groups.get(currentActivity.getGroupsId()[g]).getGroupName()).append(" ");
         }
         lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject()+"\n"+
                 groupsNames);
