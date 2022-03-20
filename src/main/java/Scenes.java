@@ -1,5 +1,7 @@
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ClipboardContent;
@@ -110,17 +112,14 @@ public class Scenes {
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
                 if (j==0 || i==0) scheduleMatrix[i][j].setBackground(HEADER);
                 else {
-                    addDropHandlingSchedule(scheduleMatrix[i][j],professorId);
+                    addDropHandlingProfSchedule(scheduleMatrix[i][j],professorId);
                     int presentActivityId=professor.getActivityProfesor(semester,i-1,j-1);
                     if (presentActivityId!=-1) {
                         Activity presentActivity=activities.get(presentActivityId);
-                        if (j == 1 || presentActivity.getIdActivity() != professor.getActivityProfesor(semester,i - 1, j - 2)) {
-                            GridPane.setRowSpan(scheduleMatrix[i][j], presentActivity.getTime());
-                            IndexedLabel lbl=Utility.createLabel(presentActivity, professor, groups);
-                            scheduleMatrix[i][j].getChildren().add(lbl);
-                            dragTextArea(lbl);
-                            System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
-                        }
+                        IndexedLabel lbl=Utility.createSmallLabel(presentActivity, professor, groups);
+                        scheduleMatrix[i][j].getChildren().add(lbl);
+                        dragTextArea(lbl);
+                        System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
                     }
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
@@ -169,10 +168,32 @@ public class Scenes {
         });
         pane.setOnDragDropped(e -> {
             if (draggingLabel.getProfessorId()==professorId) {
-                ((Pane) draggingLabel.getParent()).getChildren().remove(draggingLabel);
+                try {
+                    ObservableList<Node> childrens;
+                    Pane parentOfLabel = (Pane) draggingLabel.getParent();
+                    Pane actualPane;
+                    IndexedLabel actualLabel;
+                    GridPane gridOfOrigin = (GridPane) parentOfLabel.getParent();
+                    childrens = gridOfOrigin.getChildren();
+                    for (Node node:childrens){
+                        if (node.getClass()==pane.getClass()) {
+                            actualPane = (StackPane) node;
+                            if (!actualPane.getChildren().isEmpty()) {
+                                actualLabel = (IndexedLabel) actualPane.getChildren().get(0);
+                                if (actualLabel.getActivityId() == draggingLabel.getActivityId()) {
+                                    ((Pane) actualLabel.getParent()).getChildren().remove(actualLabel);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception exception) {
+
+                }
                 Activity activity=activities.get(draggingLabel.getActivityId());
                 Professor professor=professors.get(professorId);
                 int semester=activity.getSemester();
+                draggingLabel.setPrefSize(80,40*activity.getTime());
                 pane.getChildren().add(draggingLabel);
                 e.setDropCompleted(true);
                 dragTextArea(draggingLabel);
@@ -184,13 +205,11 @@ public class Scenes {
                             if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
                     }
-                e.setDropCompleted(true);
-                draggingLabel=null;
-            }
+                }
         });
     }
 
-    private void addDropHandlingSchedule(StackPane pane,int professorId) {
+    private void addDropHandlingProfSchedule(StackPane pane, int professorId) {
         pane.setOnDragOver(e -> {
             Dragboard db = e.getDragboard();
             if (db.hasContent(labelFormat)&&draggingLabel!=null&&pane.getChildren().isEmpty()) {
@@ -206,21 +225,10 @@ public class Scenes {
                 int     row= GridPane.getRowIndex(pane),
                         col= GridPane.getColumnIndex(pane),
                         time = activity.getTime();
-                if (isMovable(col,row,time,activity)){
-                    ((Pane)draggingLabel.getParent()).getChildren().remove(draggingLabel);
-                    draggingLabel.setPrefSize(80,40);
-                    pane.getChildren().add(draggingLabel);
-                    for (int i=0;i<HOURS;i++)
-                        for (int j=0;j<DAYS;j++){
-                            if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
-                                professor.setActivityProfesor(semester,i,j,-1);
-                            for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
-                                if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
-                                    groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
-                        }
-                    professor.setActivityProfesor(semester,col-1, row-1, activity.getIdActivity());
-                    for (int j = 0; j<activity.getGroupsId().length; j++)
-                        groups.get(activity.getGroupsId()[j]).setActivityGroup(semester,col-1,row-1,activity.getIdActivity());
+                if (isMovableToProfSchedule(col,row,time,activity)){
+                    Pane parentOfLabel=(Pane) draggingLabel.getParent();
+                    parentOfLabel.getChildren().clear();
+                    moveToProfSchedule(pane,col,row,activity);
                     draggingLabel = null;
                     e.setDropCompleted(true);
                 }
@@ -228,23 +236,176 @@ public class Scenes {
         });
     }
 
-    private boolean isMovable(int col, int row, int time,Activity activity){
-        int semester=activity.getSemester();
-        Professor professor=professors.get(activity.getProfessorId());
-
-
-
-        if (row>0&&col>0&&col+time/2<7) {
-            for (int i = 0; i < time; i++) {
-                if (professor.getActivityProfesor(semester,col-1,row-1+i) != -1
-                        && professor.getActivityProfesor(semester,col-1,row-1+i)!=activity.getIdActivity())
-                    return false;
-                for (int j = 0; j<activity.getGroupsId().length; j++)
-                    if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,col-1,row-1+i) != -1
-                            && groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,col-1,row-1+i)!=activity.getIdActivity())
-                        return false;}
-            return true;
+    private boolean isMovableToProfSchedule(int col, int row, int time, Activity activity) {
+        int semester = activity.getSemester();
+        Professor professor = professors.get(activity.getProfessorId());
+        if (row == 0 || col == 0) {
+            return false;
         }
-        return false;
+        if (col + (time - 1) / 2 > 7) {
+            return false;
+        }
+        int add;
+        int X,Y;
+        switch (time%2) {
+            case 1:
+                if (row % 2 == 0)
+                    add=-1;
+                else
+                    add=1;
+                for (int t=0;t<time;t++) {
+                    X=row+(t%2)*add;
+                    Y=col+(t+1)/2;
+                    if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
+                        return false;
+                    };
+                    for (int j = 0; j<activity.getGroupsId().length; j++)
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,Y-1, X-1) != -1 ) {
+                            return false;
+                        };
+                }
+                break;
+            case 0:
+                if (row % 2 == 0)
+                    row--;
+                for (int t=0;t<time;t++) {
+                    X=row+t%2;
+                    Y=col+t/2;
+                    if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
+                        return false;
+                    };
+                    for (int j = 0; j<activity.getGroupsId().length; j++)
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,Y-1, X-1) != -1 ) {
+                            return false;
+                        };
+                }
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+
+    private void moveToProfSchedule(StackPane pane,int col, int row,Activity activity) {
+
+        StackPane pane2,actualPane;
+        GridPane grid;
+        IndexedLabel actualLabel;
+        IndexedLabel[] labels;
+        int add=1;
+        ObservableList<Node> childrens;
+        int X,Y,nodeX,nodeY;
+
+        Professor professor=professors.get(activity.getProfessorId());
+        int semester=activity.getSemester();
+        int time=activity.getTime();
+        switch (time%2) {
+            case 1:
+                grid=(GridPane) pane.getParent();
+                labels=new IndexedLabel[time];
+                for (int i=0;i<time;i++) {
+                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    dragTextArea(labels[i]);
+                }
+                childrens = grid.getChildren();
+                for (Node node:childrens){
+                    if (node.getClass()==pane.getClass()) {
+                        actualPane = (StackPane) node;
+                        if (!actualPane.getChildren().isEmpty()) {
+                            actualLabel = (IndexedLabel) actualPane.getChildren().get(0);
+                            if (actualLabel.getActivityId() == draggingLabel.getActivityId()) {
+                                ((Pane) actualLabel.getParent()).getChildren().remove(actualLabel);
+                            }
+                        }
+                    }
+                }
+                for (int i=0;i<HOURS;i++)
+                    for (int j=0;j<DAYS;j++){
+                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
+                            professor.setActivityProfesor(semester,i,j,-1);
+                        for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
+                            if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
+                                groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
+                    }
+
+                if (row % 2 == 0)
+                    add=-1;
+                else
+                    add=1;
+                for (int t=0;t<time;t++) {
+                    X=row+(t%2)*add;
+                    Y=col+(t+1)/2;
+                    System.out.println(t);
+                    childrens = grid.getChildren();
+                    for (Node node:childrens) {
+                        nodeX=GridPane.getRowIndex(node);
+                        nodeY=GridPane.getColumnIndex(node);
+                        if ( nodeX == X  && nodeY == Y ) {
+                            pane2 = (StackPane) node;
+                            pane2.getChildren().add(labels[t]);
+                        }
+                        if ( nodeX >= X && nodeY >= Y ) {
+                            break;
+                        }
+                    }
+                    professor.setActivityProfesor(semester,Y-1, X-1, activity.getIdActivity());
+                    for (int j = 0; j<activity.getGroupsId().length; j++)
+                        groups.get(activity.getGroupsId()[j]).setActivityGroup(semester,Y-1, X-1, activity.getIdActivity());
+                }
+                break;
+            case 0:
+                grid=(GridPane) pane.getParent();
+                labels=new IndexedLabel[time];
+                for (int i=0;i<time;i++) {
+                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    dragTextArea(labels[i]);
+                }
+                childrens = grid.getChildren();
+                for (Node node:childrens){
+                    if (node.getClass()==pane.getClass()) {
+                        actualPane = (StackPane) node;
+                        if (!actualPane.getChildren().isEmpty()) {
+                            actualLabel = (IndexedLabel) actualPane.getChildren().get(0);
+                            if (actualLabel.getActivityId() == draggingLabel.getActivityId()) {
+                                ((Pane) actualLabel.getParent()).getChildren().remove(actualLabel);
+                            }
+                        }
+                    }
+                }
+                for (int i=0;i<HOURS;i++)
+                    for (int j=0;j<DAYS;j++){
+                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
+                            professor.setActivityProfesor(semester,i,j,-1);
+                        for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
+                            if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
+                                groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
+                    }
+                if (row % 2 == 0)
+                    row--;
+                for (int t=0;t<time;t++) {
+                    X=row+t%2;
+                    Y=col+t/2;
+                    System.out.println(t);
+                    childrens = grid.getChildren();
+                    for (Node node:childrens) {
+                        nodeX=GridPane.getRowIndex(node);
+                        nodeY=GridPane.getColumnIndex(node);
+                        if ( nodeX == X  && nodeY == Y ) {
+                            pane2 = (StackPane) node;
+                            pane2.getChildren().add(labels[t]);
+                        }
+                        if ( nodeX >= X && nodeY >= Y ) {
+                            break;
+                        }
+                    }
+                    professor.setActivityProfesor(semester,Y-1, X-1, activity.getIdActivity());
+                    for (int j = 0; j<activity.getGroupsId().length; j++)
+                        groups.get(activity.getGroupsId()[j]).setActivityGroup(semester,Y-1, X-1, activity.getIdActivity());
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
