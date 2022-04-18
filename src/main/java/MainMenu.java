@@ -19,6 +19,8 @@ public class MainMenu {
 
         Stage mainStage=new Stage();
 
+        Integer[] years={1,2,3};
+
         VBox mainBox=new VBox();
         mainBox.setPadding(new Insets(10,10,10,10));
         mainBox.setSpacing(5);
@@ -29,13 +31,17 @@ public class MainMenu {
         ComboBox<Integer> semesterCombo=new ComboBox<>();
         semesterCombo.getItems().add(1);
         semesterCombo.getItems().add(2);
-        semesterCombo.setValue(0);
+        semesterCombo.setValue(1);
         ComboBox<String> profCombo=new ComboBox<>();
         Button chooseProfesor=new Button("Choose Prof");
         ComboBox<String> groupCombo=new ComboBox<>();
         Button chooseGroup=new Button("Choose Group");
         Button saveData=new Button("Save Data");
         Button loadData=new Button("Load Data");
+        ComboBox<Integer> yearCombo=new ComboBox<>();
+        yearCombo.getItems().addAll(years);
+        yearCombo.setValue(years[0]);
+        Button chooseYear =new Button("Choose Year");
         readFile.setOnAction(event -> {
             readFileText.setText("Please wait ... reading data");
             activities = Utility.readXls(file, professors, groups, faculty);
@@ -64,6 +70,16 @@ public class MainMenu {
                 System.out.println("Can't generate scene");
             }
         });
+        chooseYear.setOnAction(event -> {
+            try{
+                int yearSelected=yearCombo.getSelectionModel().getSelectedItem();
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                scenes.yearScheduleScene(yearSelected,semester);
+            }
+            catch (Exception ex){
+                System.out.println("Can't generate scene");
+            }
+        });
 /*        chooseGroup.setOnAction(event -> {
             try{
                 int indexSelected=groupCombo.getSelectionModel().getSelectedIndex();
@@ -74,6 +90,7 @@ public class MainMenu {
                 System.out.println("Can't generate scene");
             }
         });
+
  */       saveData.setOnAction(event -> {
             try {
                 boolean ok=Utility.saveData("data/savedfile", professors,groups,activities);
@@ -91,7 +108,7 @@ public class MainMenu {
             }
         });*/
 
-        mainBox.getChildren().addAll(readFile,readFileText,semesterCombo,profCombo,chooseProfesor,groupCombo,chooseGroup,saveData,loadData);
+        mainBox.getChildren().addAll(readFile,readFileText,semesterCombo,profCombo,yearCombo,chooseProfesor,chooseYear,groupCombo,chooseGroup,saveData,loadData);
         mainStage.setScene(mainScene);
         mainStage.setTitle("Main menu");
         mainStage.show();

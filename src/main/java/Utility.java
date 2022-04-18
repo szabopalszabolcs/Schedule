@@ -228,7 +228,7 @@ public class Utility {
                                 Group[][] actualGroups = new Group[4][numberOfGroups * nrProfs];
 
                                 for (int i = 0; i < numberOfGroups; i++) {
-                                    actualGroups[0][i] = new Group(0, departament + speciality[0], year, i + 1);
+                                    actualGroups[0][i] = new Group(0, speciality[0], year, i + 1);
                                     actualGroups[0][i] = addIfNotInGroup(actualGroups[0][i], groups);
                                     for (int j = 1; j < 4; j++) {
                                         actualGroups[j][i] = actualGroups[0][i];
@@ -352,13 +352,41 @@ public class Utility {
         return lbl;
     }
 
+    public static IndexedLabel createLabelForBigSchedule(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+        int[] groupId=new int[groups.size()];
+        for (int i=0;i<groups.size();i++) {
+            groupId[i]=groups.get(i).getIdGroup();
+        }
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
+        lbl.setPrefSize(60, 25);
+        lbl.setFont(Font.font(8));
+        lbl.setTextAlignment(TextAlignment.CENTER);
+        lbl.setAlignment(Pos.CENTER);
+        lbl.setWrapText(true);
+        lbl.setStyle("-fx-border:black;");
+        StringBuilder groupsNames= new StringBuilder();
+        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject());
+        switch (currentActivity.getType()) {
+            case 1:
+                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
+            case 2:
+                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
+            case 3:
+                lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
+            case 4:
+                lbl.setStyle("-fx-background-color:LIGHTGREY;"); break;
+            default:
+                lbl.setStyle("-fx-background-color:BLACK;");
+        }
+        return lbl;
+    }
+
     public static IndexedLabel createSmallLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
         int[] groupId=new int[groups.size()];
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
         }
         IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
-        int time=currentActivity.getTime();
         lbl.setPrefSize(80, 40);
         lbl.setFont(Font.font(8));
         lbl.setTextAlignment(TextAlignment.CENTER);

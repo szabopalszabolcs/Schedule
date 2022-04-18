@@ -4,8 +4,11 @@ public class Group {
     private String groupName;
     private int[][][] scheduleGroup;
     private int[] activitiesOfGroup;
+    private String speciality;
+    private int year;
+    private int groupNumber;
 
-    public Group(int id,String speciality,int year,int groupNumber){
+    public Group(int id, String speciality, int year, int groupNumber){
         final int HOURS = 7,DAYS = 12;
         this.idGroup=id;
         this.groupName=speciality+year+groupNumber;
@@ -15,6 +18,33 @@ public class Group {
                 for(int k=0;k<DAYS;k++)
                     scheduleGroup[i][j][k]=-1;
         activitiesOfGroup = new int[0];
+        this.speciality=speciality;
+        this.year=year;
+        this.groupNumber=groupNumber;
+    }
+
+    public String getSpeciality() {
+        return speciality;
+    }
+
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getGroupNumber() {
+        return groupNumber;
+    }
+
+    public void setGroupNumber(int groupNumber) {
+        this.groupNumber = groupNumber;
     }
 
     public String getGroupName(){

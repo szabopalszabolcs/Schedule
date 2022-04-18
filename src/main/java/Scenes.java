@@ -114,7 +114,7 @@ public class Scenes {
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
                 if (j==0 || i==0) scheduleMatrix[i][j].setBackground(HEADER);
                 else {
-                    addDropHandlingProfSchedule(scheduleMatrix[i][j],professorId);
+                    addDropHandlingProfSchedule(scheduleMatrix[i][j]);
                     int presentActivityId=professor.getActivityProfesor(semester,i-1,j-1);
                     if (presentActivityId!=-1) {
                         Activity presentActivity=activities.get(presentActivityId);
@@ -369,7 +369,7 @@ public class Scenes {
         });
     }
 
-    private void addDropHandlingProfSchedule(StackPane pane, int professorId) {
+    private void addDropHandlingProfSchedule(StackPane pane) {
         pane.setOnDragOver(e -> {
             Dragboard db = e.getDragboard();
             if (db.hasContent(labelFormat)&&draggingLabel!=null&&pane.getChildren().isEmpty()) {
@@ -416,11 +416,12 @@ public class Scenes {
                     Y=col+(t+1)/2;
                     if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
                         return false;
-                    };
-                    for (int j = 0; j<activity.getGroupsId().length; j++)
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,Y-1, X-1) != -1 ) {
+                    }
+                    for (int j = 0; j<activity.getGroupsId().length; j++) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, Y - 1, X - 1) != -1) {
                             return false;
-                        };
+                        }
+                    }
                 }
                 break;
             case 0:
@@ -431,11 +432,12 @@ public class Scenes {
                     Y=col+t/2;
                     if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
                         return false;
-                    };
-                    for (int j = 0; j<activity.getGroupsId().length; j++)
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,Y-1, X-1) != -1 ) {
+                    }
+                    for (int j = 0; j<activity.getGroupsId().length; j++) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, Y - 1, X - 1) != -1) {
                             return false;
-                        };
+                        }
+                    }
                 }
                 break;
             default:
@@ -451,7 +453,7 @@ public class Scenes {
         GridPane grid;
         IndexedLabel actualLabel;
         IndexedLabel[] labels;
-        int add=1;
+        int add;
         ObservableList<Node> childrens;
         int X,Y,nodeX,nodeY;
 
@@ -607,11 +609,16 @@ public class Scenes {
         for (int g:activity.getGroupsId()) {
             if (g==groupOfThisRow) {
                 rowOk=true;
+                break;
             }
         }
-        if (!rowOk)
+        if (!rowOk) {
             return null;
+        }
         if (col + (time - 1) / 2 > 6 * HOURS + 4 ) {
+            return null;
+        }
+        if ((col-4)/HOURS!=(col+(time-1)/2-4)/HOURS) {
             return null;
         }
         int add;
@@ -627,11 +634,12 @@ public class Scenes {
                     Y=col+(t+1)/2;
                     if (professor.getActivityProfesor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
                         return null;
-                    };
-                    for (int j = 0; j<activity.getGroupsId().length; j++)
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1 ) {
+                    }
+                    for (int j = 0; j<activity.getGroupsId().length; j++) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row) != -1) {
                             return null;
-                        };
+                        }
+                    }
                 }
                 break;
             case 0:
@@ -642,11 +650,12 @@ public class Scenes {
                     Y=col+t/2;
                     if (professor.getActivityProfesor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
                         return null;
-                    };
-                    for (int j = 0; j<activity.getGroupsId().length; j++)
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester,(Y-4)&HOURS, (Y - 4) / HOURS *2+X-row ) != -1 ) {
+                    }
+                    for (int j = 0; j<activity.getGroupsId().length; j++) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, (Y - 4) & HOURS, (Y - 4) / HOURS * 2 + X - row) != -1) {
                             return null;
-                        };
+                        }
+                    }
                 }
                 break;
             default:
@@ -677,10 +686,9 @@ public class Scenes {
         GridPane grid;
         IndexedLabel actualLabel;
         IndexedLabel[] labels;
-        int add=1;
+        int add;
         ObservableList<Node> childes;
         int X,Y,nodeX,nodeY;
-        int numberOfGroups=groupsOfThisGrid.size();
 
         Professor professor=professors.get(activity.getProfessorId());
         int semester=activity.getSemester();
