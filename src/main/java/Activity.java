@@ -19,7 +19,7 @@ public class Activity {
         this.subject = subject;
         this.codeSubject = codeSubject;
         this.professorId = professorId;
-        this.type =tip;
+        this.type = tip;
         this.groupsId = groupsId;
         this.semester = semester;
         this.yearOfStudy = yearOfStudy;
@@ -85,5 +85,15 @@ public class Activity {
     public int getSemester() { return semester; }
 
     public int getIdActivity() { return idActivity; }
+
+    public String getTypeChar() {
+        String[] typeChar={"C","S","L","P"};
+        try {
+            return typeChar[this.type-1];
+        }
+        catch (Exception ex) {
+            return "X";
+        }
+    }
 
 }

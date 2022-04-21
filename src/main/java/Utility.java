@@ -57,7 +57,9 @@ public class Utility {
     }
 
     static void createActivities(ArrayList<Activity> activities, ArrayList<Professor> professors, ArrayList<Group> groups, int profNumber, int numberOfGroups, int fAct, Group[][] actualGroups, String subject, String codeSubject, Professor[] actualProfs, int type, int semester, int year, int actTotal, int[] actTime, int numberOfCourses) {
+
         float nrAct=(float) fAct*actTime[profNumber]/actTotal;
+
         for (int j = 0; j < nrAct ; j++) {
             int groupTeam = (numberOfGroups/fAct);
             Group[] groupsToAdd = new Group[groupTeam];
@@ -80,6 +82,7 @@ public class Utility {
             else
                 activityTime=(float) actTotal/fAct/2;
             activityTime*=2;
+            if (activityTime<1) activityTime=1;
             Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfesor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
             if(numberOfCourses==-1){
                 for (Activity nextActivity:activities){
@@ -320,12 +323,16 @@ public class Utility {
         return true;
     }
 
-    public static IndexedLabel createLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+    public static IndexedLabel createProfLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+
         int[] groupId=new int[groups.size()];
+
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
         }
+
         IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
+
         int time=currentActivity.getTime();
         lbl.setPrefSize(80,40*time);
         lbl.setFont(Font.font(8));
@@ -337,24 +344,23 @@ public class Utility {
         for (int g = 0; g<currentActivity.getGroupsId().length; g++){
             groupsNames.append(groups.get(currentActivity.getGroupsId()[g]).getGroupName()).append(" ");
         }
-        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject()+"\n"+
-                groupsNames);
+        lbl.setText(groupsNames+"\n"+currentActivity.getCodeSubject()+","+currentActivity.getTypeChar());
         switch (currentActivity.getType()) {
             case 1:
-                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
-            case 2:
-                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
-            case 3:
                 lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
+            case 2:
+                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
+            case 3:
+                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
             case 4:
-                lbl.setStyle("-fx-background-color:LIGHTGREY;"); break;
+                lbl.setStyle("-fx-background-color:LIGHTORANGE;"); break;
             default:
                 lbl.setStyle("-fx-background-color:BLACK;");
         }
         return lbl;
     }
 
-    public static IndexedLabel createLabelForBigSchedule(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+    public static IndexedLabel createYearLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
         int[] groupId=new int[groups.size()];
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
@@ -367,54 +373,23 @@ public class Utility {
         lbl.setWrapText(true);
         lbl.setStyle("-fx-border:black;");
         StringBuilder groupsNames= new StringBuilder();
-        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject());
+        lbl.setText(currentActivity.getCodeSubject()+","+currentActivity.getTypeChar()+"\n"+professor.getShortName());
         switch (currentActivity.getType()) {
             case 1:
-                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
-            case 2:
-                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
-            case 3:
                 lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
+            case 2:
+                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
+            case 3:
+                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
             case 4:
-                lbl.setStyle("-fx-background-color:LIGHTGREY;"); break;
+                lbl.setStyle("-fx-background-color:LIGHTORANGE;"); break;
             default:
                 lbl.setStyle("-fx-background-color:BLACK;");
         }
         return lbl;
     }
 
-    public static IndexedLabel createSmallLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
-        int[] groupId=new int[groups.size()];
-        for (int i=0;i<groups.size();i++) {
-            groupId[i]=groups.get(i).getIdGroup();
-        }
-        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
-        lbl.setPrefSize(80, 40);
-        lbl.setFont(Font.font(8));
-        lbl.setTextAlignment(TextAlignment.CENTER);
-        lbl.setAlignment(Pos.CENTER);
-        lbl.setWrapText(true);
-        lbl.setStyle("-fx-border:black;");
-        StringBuilder groupsNames= new StringBuilder();
-        for (int g = 0; g<currentActivity.getGroupsId().length; g++){
-            groupsNames.append(groups.get(currentActivity.getGroupsId()[g]).getGroupName()).append(" ");
-        }
-        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject()+"\n"+
-                groupsNames);
-        switch (currentActivity.getType()) {
-            case 1:
-                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
-            case 2:
-                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
-            case 3:
-                lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
-            case 4:
-                lbl.setStyle("-fx-background-color:LIGHTGREY;"); break;
-            default:
-                lbl.setStyle("-fx-background-color:BLACK;");
-        }
-        return lbl;
-    }
+
 
 
 }

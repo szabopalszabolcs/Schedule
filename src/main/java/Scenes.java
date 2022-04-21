@@ -1,14 +1,12 @@
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -31,7 +29,7 @@ public class Scenes {
     ArrayList<Professor> professors;
     public static IndexedLabel draggingLabel;
     private final DataFormat labelFormat;
-    private Timeline scrollTimeLine=new Timeline();
+    public Timeline scrollTimeLine=new Timeline();
 
     public Scenes(ArrayList<Professor> professors, ArrayList<Activity> activities, ArrayList<Group> groups) {
         this.professors = professors;
@@ -64,7 +62,7 @@ public class Scenes {
                     int presentActivityId=professor.getActivityProfesor(semester,i-1,j-1);
                     if (presentActivityId!=-1) {
                         Activity presentActivity=activities.get(presentActivityId);
-                        IndexedLabel lbl=Utility.createSmallLabel(presentActivity, professor, groups);
+                        IndexedLabel lbl=Utility.createProfLabel(presentActivity, professor, groups);
                         scheduleMatrix[i][j].getChildren().add(lbl);
                         dragTextArea(lbl);
                         System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
@@ -98,7 +96,7 @@ public class Scenes {
                 addDropHandlingClasses(classesArray[count], professorId);
                 classesGrid.add(classesArray[count], count % sqr, count / sqr);
                 if (!onSchedule(professor.getActivitiesOfProfesor()[i], professorId, semester)) {
-                    IndexedLabel lbl = Utility.createLabel(currentActivity, professor, groups);
+                    IndexedLabel lbl = Utility.createProfLabel(currentActivity, professor, groups);
                     classesArray[count].getChildren().add(lbl);
                     dragTextArea(lbl);
                 }
@@ -246,7 +244,7 @@ public class Scenes {
                     presentActivity=activities.get(presentActivityId);
                     professor=professors.get(presentActivity.getProfessorId());
                     addDropHandlingYearSchedule(scheduleMatrix[i][j],groupsOfYear);
-                    lbl=Utility.createLabelForBigSchedule(presentActivity, professor, groups);
+                    lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
                     System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,(i-4)%HOURS, day*2)).getSubject() + " " + i + "," + j);
@@ -268,7 +266,7 @@ public class Scenes {
                     presentActivity=activities.get(presentActivityId);
                     professor=professors.get(presentActivity.getProfessorId());
                     addDropHandlingYearSchedule(scheduleMatrix[i][j],groupsOfYear);
-                    lbl=Utility.createLabelForBigSchedule(presentActivity, professor, groups);
+                    lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
                     System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,(i-4)%HOURS, day*2+1)).getSubject() + " " + i + "," + j);
@@ -297,17 +295,11 @@ public class Scenes {
 
         scrollTimeLine.setCycleCount(Timeline.INDEFINITE);
 
-        scrollTimeLine.getKeyFrames().add(new KeyFrame(Duration.millis(20),"Scroll", (ActionEvent) -> {
-           dragScroll(scrollPane,scrollDirection);
-        }));
+        scrollTimeLine.getKeyFrames().add(new KeyFrame(Duration.millis(20),"Scroll", (ActionEvent) -> dragScroll(scrollPane,scrollDirection)));
 
-        scrollPane.setOnDragEntered(event -> {
-            scrollTimeLine.stop();
-        });
+        scrollPane.setOnDragEntered(event -> scrollTimeLine.stop());
 
-        scrollPane.setOnDragDone(event -> {
-            scrollTimeLine.stop();
-        });
+        scrollPane.setOnDragDone(event -> scrollTimeLine.stop());
 
         scrollPane.setOnDragExited(event -> {
             if (event.getX()>0) {
@@ -344,8 +336,12 @@ public class Scenes {
             db.setContent(content);
             draggingLabel=ta;
         });
-        ta.setOnMouseClicked(e -> {
-            professorsScheduleScene(ta.getProfessorId(),activities.get(ta.getActivityId()).getSemester());
+        ta.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount()==2) {
+                    professorsScheduleScene(ta.getProfessorId(), activities.get(ta.getActivityId()).getSemester());
+                }
+            }
         });
     }
 
@@ -497,7 +493,7 @@ public class Scenes {
                 grid=(GridPane) pane.getParent();
                 labels=new IndexedLabel[time];
                 for (int i=0;i<time;i++) {
-                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    labels[i] = Utility.createProfLabel(activity, professor, groups);
                     dragTextArea(labels[i]);
                 }
                 childrens = grid.getChildren();
@@ -552,7 +548,7 @@ public class Scenes {
                 grid=(GridPane) pane.getParent();
                 labels=new IndexedLabel[time];
                 for (int i=0;i<time;i++) {
-                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    labels[i] = Utility.createProfLabel(activity, professor, groups);
                     dragTextArea(labels[i]);
                 }
                 childrens = grid.getChildren();
@@ -732,7 +728,7 @@ public class Scenes {
                 grid=(GridPane) pane.getParent();
                 labels=new IndexedLabel[time*rows.size()];
                 for (int i=0;i<(time*rows.size());i++) {
-                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    labels[i] = Utility.createYearLabel(activity, professor, groups);
                     dragTextArea(labels[i]);
                 }
                 childes = grid.getChildren();
@@ -797,7 +793,7 @@ public class Scenes {
                 grid=(GridPane) pane.getParent();
                 labels=new IndexedLabel[time*rows.size()];
                 for (int i=0;i<time*rows.size();i++) {
-                    labels[i] = Utility.createLabel(activity, professor, groups);
+                    labels[i] = Utility.createProfLabel(activity, professor, groups);
                     dragTextArea(labels[i]);
                 }
                 childes = grid.getChildren();
