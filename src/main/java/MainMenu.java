@@ -1,3 +1,5 @@
+import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -38,12 +40,17 @@ public class MainMenu {
         Button chooseGroup=new Button("Choose Group");
         Button saveData=new Button("Save Data");
         Button loadData=new Button("Load Data");
+        Button exit=new Button("Exit");
         ComboBox<Integer> yearCombo=new ComboBox<>();
         yearCombo.getItems().addAll(years);
         yearCombo.setValue(years[0]);
         Button chooseYear =new Button("Choose Year");
         readFile.setOnAction(event -> {
             readFileText.setText("Please wait ... reading data");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
             activities = Utility.readXls(file, professors, groups, faculty);
             if (activities!=null) {
                 profCombo.getItems().clear();
@@ -63,7 +70,7 @@ public class MainMenu {
             try{
                 int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
                 int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                scenes.professorsClassesScene(indexSelected,semester);
+                //scenes.professorsClassesScene(indexSelected,semester);
                 scenes.professorsScheduleScene(indexSelected,semester);
             }
             catch (Exception ex){
@@ -93,7 +100,7 @@ public class MainMenu {
 
  */       saveData.setOnAction(event -> {
             try {
-                boolean ok=Utility.saveData("data/savedfile", professors,groups,activities);
+                Utility.saveData("data/savedfile", professors,groups,activities);
             }
             catch (Exception ex){
                 System.out.println("Saving failed");
@@ -108,8 +115,15 @@ public class MainMenu {
             }
         });*/
 
-        mainBox.getChildren().addAll(readFile,readFileText,semesterCombo,profCombo,yearCombo,chooseProfesor,chooseYear,groupCombo,chooseGroup,saveData,loadData);
+        exit.setOnAction(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
+
+        mainBox.getChildren().addAll(readFile,readFileText,semesterCombo,profCombo,chooseProfesor,yearCombo,chooseYear,groupCombo,chooseGroup,saveData,loadData,exit);
         mainStage.setScene(mainScene);
+        mainStage.setOnCloseRequest(Event::consume);
         mainStage.setTitle("Main menu");
         mainStage.show();
 

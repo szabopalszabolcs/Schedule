@@ -51,6 +51,8 @@ public class Utility {
     }
 
     static void errorMessage(String message){
+
+
         System.out.println(message);
     }
 
@@ -295,8 +297,8 @@ public class Utility {
         }
         if (profesors.isEmpty()) return false;
         return true;
-    }
-*/
+    }*/
+
     public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) throws IOException {
 
         Gson gson = new GsonBuilder()
@@ -413,5 +415,6 @@ public class Utility {
         }
         return lbl;
     }
+
 
 }

@@ -13,8 +13,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class Scenes {
 
@@ -25,6 +31,7 @@ public class Scenes {
     ArrayList<Professor> professors;
     public static IndexedLabel draggingLabel;
     private final DataFormat labelFormat;
+    private Timeline scrollTimeLine=new Timeline();
 
     public Scenes(ArrayList<Professor> professors, ArrayList<Activity> activities, ArrayList<Group> groups) {
         this.professors = professors;
@@ -37,75 +44,14 @@ public class Scenes {
             labelFormat=dataFormat;
     }
 
-    public void professorsClassesScene(int professorId, int semester) {
-
-        Professor professor = professors.get(professorId);
-        Stage classesStage = new Stage();
-        ScrollPane classesRoot=new ScrollPane();
-        GridPane classesGrid=new GridPane();
-        int nrActivities=0;
-        for (int activity: professor.getActivitiesOfProfesor()) {
-            if (activities.get(activity).getSemester() == semester) {
-                nrActivities++;
-            }
-        }
-        StackPane[] classesArray=new StackPane[nrActivities];
-        int sqr,multiplier=0;
-        if (Math.floor((Math.sqrt(nrActivities)))==Math.sqrt(nrActivities)) {
-            sqr = (int) Math.floor(Math.sqrt(nrActivities));
-        }
-        else {
-            sqr = (int) Math.floor(Math.sqrt(nrActivities)) + 1;
-        }
-        int count=0;
-        for (int i = 0; i< professor.getActivitiesOfProfesor().length; i++) {
-            Activity currentActivity = activities.get(professor.getActivitiesOfProfesor()[i]);
-            if (currentActivity.getSemester() == semester && !onSchedule(professor.getActivitiesOfProfesor()[i],professorId,semester)) {
-                IndexedLabel lbl = Utility.createLabel(currentActivity, professor, groups);
-                classesArray[count] = new StackPane();
-                classesArray[count].setMinSize(40,40);
-                classesArray[count].setAlignment(Pos.CENTER);
-                addDropHandlingClasses(classesArray[count],professorId);
-                classesArray[count].getChildren().add(lbl);
-                classesGrid.add(classesArray[count], count % sqr, count / sqr);
-                dragTextArea(lbl);
-                count++;
-            }
-        }
-        for (int i=sqr-1;i<sqr+1;i++) {
-            if (sqr*i>count) {
-                multiplier=i;
-                break;
-            }
-        }
-        if (multiplier==0) multiplier=sqr;
-        for (int i=count;i<sqr*multiplier;i++) {
-            StackPane pane = new StackPane();
-            pane.setMinSize(40, 40);
-            pane.setAlignment(Pos.CENTER);
-            addDropHandlingClasses(pane,professorId);
-            classesGrid.add(pane, i % sqr, i / sqr);
-        }
-        classesGrid.setGridLinesVisible(true);
-        classesGrid.setPadding(new Insets(10,10,10,10));
-        classesRoot.setContent(classesGrid);
-        classesRoot.setMinWidth(300);
-        classesRoot.autosize();
-        Scene classesScene=new Scene(classesRoot);
-        classesStage.setScene(classesScene);
-        classesStage.setTitle(professor.getName()+" semestrul "+semester);
-        classesStage.show();
-
-    }
-
     public void professorsScheduleScene(int professorId, int semester) {
 
         Professor professor = professors.get(professorId);
         Stage scheduleStage=new Stage();
-        StackPane scheduleRoot=new StackPane();
+        HBox horizontalBox=new HBox();
+        GridPane classesGrid=new GridPane();
         GridPane scheduleGrid=new GridPane();
         StackPane[][] scheduleMatrix=new StackPane[HOURS+1][DAYS+1];
-        Scene scheduleScene=new Scene(scheduleRoot);
 
         for (int i=0;i<HOURS+1;i++)
             for (int j=0;j<DAYS+1;j++){
@@ -127,19 +73,65 @@ public class Scenes {
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
             }
 
+        int nrActivities=0;
+        for (int activity: professor.getActivitiesOfProfesor()) {
+            if (activities.get(activity).getSemester() == semester) {
+                nrActivities++;
+            }
+        }
+        StackPane[] classesArray=new StackPane[nrActivities];
+        int sqr,multiplier=0;
+        if (Math.floor((Math.sqrt(nrActivities)))==Math.sqrt(nrActivities)) {
+            sqr = (int) Math.floor(Math.sqrt(nrActivities));
+        }
+        else {
+            sqr = (int) Math.floor(Math.sqrt(nrActivities)) + 1;
+        }
+        int count=0;
+        for (int i = 0; i< professor.getActivitiesOfProfesor().length; i++) {
+            Activity currentActivity = activities.get(professor.getActivitiesOfProfesor()[i]);
+            if (currentActivity.getSemester() == semester) {
+                classesArray[count] = new StackPane();
+                classesArray[count].setPrefWidth(80);
+                classesArray[count].setMinHeight(40);
+                classesArray[count].setAlignment(Pos.CENTER);
+                addDropHandlingClasses(classesArray[count], professorId);
+                classesGrid.add(classesArray[count], count % sqr, count / sqr);
+                if (!onSchedule(professor.getActivitiesOfProfesor()[i], professorId, semester)) {
+                    IndexedLabel lbl = Utility.createLabel(currentActivity, professor, groups);
+                    classesArray[count].getChildren().add(lbl);
+                    dragTextArea(lbl);
+                }
+                count++;
+            }
+        }
+        for (int i=sqr-1;i<sqr+1;i++) {
+            if (sqr*i>count) {
+                multiplier=i;
+                break;
+            }
+        }
+        if (multiplier==0) multiplier=sqr;
+        for (int i=count;i<sqr*multiplier;i++) {
+            StackPane pane = new StackPane();
+            pane.setPrefWidth(80);
+            pane.setMinHeight(40);
+            pane.setAlignment(Pos.CENTER);
+            addDropHandlingClasses(pane,professorId);
+            classesGrid.add(pane, i % sqr, i / sqr);
+        }
+
+
+        classesGrid.setGridLinesVisible(true);
         scheduleGrid.setGridLinesVisible(true);
-        scheduleGrid.setAlignment(Pos.CENTER);
-        ScrollPane scrollPane=new ScrollPane();
-        scrollPane.setContent(scheduleGrid);
-        scheduleRoot.getChildren().add(scrollPane);
-        scheduleRoot.setPadding(new Insets(10,10,10,10));
-        scheduleRoot.autosize();
-        StackPane.setAlignment(scheduleGrid,Pos.TOP_CENTER);
+        horizontalBox.getChildren().addAll(scheduleGrid,classesGrid);
+        horizontalBox.setPadding(new Insets(20,20,20,20));
+        horizontalBox.setAlignment(Pos.CENTER);
+        horizontalBox.setSpacing(20);
+        Scene scheduleScene=new Scene(horizontalBox);
         scheduleStage.setScene(scheduleScene);
         scheduleStage.setTitle(professor.getName()+" semestrul "+semester);
         scheduleStage.show();
-        //scheduleStage.setOnCloseRequest(event -> { });
-
 
     }
 
@@ -286,6 +278,8 @@ public class Scenes {
 
         scheduleGrid.setAlignment(Pos.CENTER);
         ScrollPane scrollPane=new ScrollPane();
+        scrollPane.pannableProperty().set(true);
+        //setupScrolling(scrollPane);
         scrollPane.setContent(scheduleGrid);
         scheduleRoot.getChildren().add(scrollPane);
         scheduleRoot.setPadding(new Insets(10,10,10,10));
@@ -295,6 +289,41 @@ public class Scenes {
         scheduleStage.setTitle("Orar anul "+year+" semestrul "+semester);
         scheduleStage.show();
 
+    }
+
+    public void setupScrolling(ScrollPane scrollPane) {
+
+        AtomicInteger scrollDirection = new AtomicInteger();
+
+        scrollTimeLine.setCycleCount(Timeline.INDEFINITE);
+
+        scrollTimeLine.getKeyFrames().add(new KeyFrame(Duration.millis(20),"Scroll", (ActionEvent) -> {
+           dragScroll(scrollPane,scrollDirection);
+        }));
+
+        scrollPane.setOnDragEntered(event -> {
+            scrollTimeLine.stop();
+        });
+
+        scrollPane.setOnDragDone(event -> {
+            scrollTimeLine.stop();
+        });
+
+        scrollPane.setOnDragExited(event -> {
+            if (event.getX()>0) {
+                scrollDirection.set(1);
+            } else
+                scrollDirection.set(-1);
+            scrollTimeLine.play();
+        });
+    }
+
+    public void dragScroll(ScrollPane scrollPane,AtomicInteger scrollDirection) {
+        double hv = scrollPane.getHvalue();
+        double newhv = hv + scrollDirection.get() *0.01;
+        newhv = Math.min(newhv, scrollPane.getHmax());
+        newhv = Math.max(newhv, scrollPane.getHmin());
+        scrollPane.setHvalue(newhv);
     }
 
     public boolean onSchedule(int activity, int professorId,int semester) {
@@ -314,6 +343,9 @@ public class Scenes {
             content.put(labelFormat,"");
             db.setContent(content);
             draggingLabel=ta;
+        });
+        ta.setOnMouseClicked(e -> {
+            professorsScheduleScene(ta.getProfessorId(),activities.get(ta.getActivityId()).getSemester());
         });
     }
 
