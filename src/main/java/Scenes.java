@@ -1,5 +1,4 @@
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,11 +13,6 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 public class Scenes {
 
@@ -29,7 +23,6 @@ public class Scenes {
     ArrayList<Professor> professors;
     public static IndexedLabel draggingLabel;
     private final DataFormat labelFormat;
-    public Timeline scrollTimeLine=new Timeline();
 
     public Scenes(ArrayList<Professor> professors, ArrayList<Activity> activities, ArrayList<Group> groups) {
         this.professors = professors;
@@ -287,35 +280,6 @@ public class Scenes {
         scheduleStage.setTitle("Orar anul "+year+" semestrul "+semester);
         scheduleStage.show();
 
-    }
-
-    public void setupScrolling(ScrollPane scrollPane) {
-
-        AtomicInteger scrollDirection = new AtomicInteger();
-
-        scrollTimeLine.setCycleCount(Timeline.INDEFINITE);
-
-        scrollTimeLine.getKeyFrames().add(new KeyFrame(Duration.millis(20),"Scroll", (ActionEvent) -> dragScroll(scrollPane,scrollDirection)));
-
-        scrollPane.setOnDragEntered(event -> scrollTimeLine.stop());
-
-        scrollPane.setOnDragDone(event -> scrollTimeLine.stop());
-
-        scrollPane.setOnDragExited(event -> {
-            if (event.getX()>0) {
-                scrollDirection.set(1);
-            } else
-                scrollDirection.set(-1);
-            scrollTimeLine.play();
-        });
-    }
-
-    public void dragScroll(ScrollPane scrollPane,AtomicInteger scrollDirection) {
-        double hv = scrollPane.getHvalue();
-        double newhv = hv + scrollDirection.get() *0.01;
-        newhv = Math.min(newhv, scrollPane.getHmax());
-        newhv = Math.max(newhv, scrollPane.getHmin());
-        scrollPane.setHvalue(newhv);
     }
 
     public boolean onSchedule(int activity, int professorId,int semester) {
