@@ -52,20 +52,20 @@ public class Scenes {
                 if (j==0 || i==0) scheduleMatrix[i][j].setBackground(HEADER);
                 else {
                     addDropHandlingProfSchedule(scheduleMatrix[i][j]);
-                    int presentActivityId=professor.getActivityProfesor(semester,i-1,j-1);
+                    int presentActivityId=professor.getActivityProfessor(semester,i-1,j-1);
                     if (presentActivityId!=-1) {
                         Activity presentActivity=activities.get(presentActivityId);
                         IndexedLabel lbl=Utility.createProfLabel(presentActivity, professor, groups);
                         scheduleMatrix[i][j].getChildren().add(lbl);
                         dragTextArea(lbl);
-                        System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
+                        System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
                     }
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
             }
 
         int nrActivities=0;
-        for (int activity: professor.getActivitiesOfProfesor()) {
+        for (int activity: professor.getActivitiesOfProfessor()) {
             if (activities.get(activity).getSemester() == semester) {
                 nrActivities++;
             }
@@ -79,8 +79,8 @@ public class Scenes {
             sqr = (int) Math.floor(Math.sqrt(nrActivities)) + 1;
         }
         int count=0;
-        for (int i = 0; i< professor.getActivitiesOfProfesor().length; i++) {
-            Activity currentActivity = activities.get(professor.getActivitiesOfProfesor()[i]);
+        for (int i = 0; i< professor.getActivitiesOfProfessor().length; i++) {
+            Activity currentActivity = activities.get(professor.getActivitiesOfProfessor()[i]);
             if (currentActivity.getSemester() == semester) {
                 classesArray[count] = new StackPane();
                 classesArray[count].setPrefWidth(80);
@@ -88,7 +88,7 @@ public class Scenes {
                 classesArray[count].setAlignment(Pos.CENTER);
                 addDropHandlingClasses(classesArray[count], professorId);
                 classesGrid.add(classesArray[count], count % sqr, count / sqr);
-                if (!onSchedule(professor.getActivitiesOfProfesor()[i], professorId, semester)) {
+                if (!onSchedule(professor.getActivitiesOfProfessor()[i], professorId, semester)) {
                     IndexedLabel lbl = Utility.createProfLabel(currentActivity, professor, groups);
                     classesArray[count].getChildren().add(lbl);
                     dragTextArea(lbl);
@@ -240,7 +240,7 @@ public class Scenes {
                     lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
-                    System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,(i-4)%HOURS, day*2)).getSubject() + " " + i + "," + j);
+                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,(i-4)%HOURS, day*2)).getSubject() + " " + i + "," + j);
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
 
@@ -262,7 +262,7 @@ public class Scenes {
                     lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
-                    System.out.println("Add label " + activities.get(professor.getActivityProfesor(semester,(i-4)%HOURS, day*2+1)).getSubject() + " " + i + "," + j);
+                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,(i-4)%HOURS, day*2+1)).getSubject() + " " + i + "," + j);
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
             }
@@ -286,7 +286,7 @@ public class Scenes {
         Professor professor = professors.get(professorId);
         for (int i=0;i<HOURS;i++)
             for (int j=0;j<DAYS;j++)
-                if (activity== professor.getActivityProfesor(semester,i,j))
+                if (activity== professor.getActivityProfessor(semester,i,j))
                     return true;
         return false;
     }
@@ -351,8 +351,8 @@ public class Scenes {
                 dragTextArea(draggingLabel);
                 for (int i=0;i<HOURS;i++)
                     for (int j=0;j<DAYS;j++){
-                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
-                            professor.setActivityProfesor(semester,i,j,-1);
+                        if (activity.getIdActivity()==professor.getActivityProfessor(semester,i,j))
+                            professor.setActivityProfessor(semester,i,j,-1);
                         for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
                             if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
@@ -406,7 +406,7 @@ public class Scenes {
                 for (int t=0;t<time;t++) {
                     X=row+(t%2)*add;
                     Y=col+(t+1)/2;
-                    if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
+                    if (professor.getActivityProfessor(semester,Y-1, X-1) != -1) {
                         return false;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
@@ -422,7 +422,7 @@ public class Scenes {
                 for (int t=0;t<time;t++) {
                     X=row+t%2;
                     Y=col+t/2;
-                    if (professor.getActivityProfesor(semester,Y-1, X-1) != -1) {
+                    if (professor.getActivityProfessor(semester,Y-1, X-1) != -1) {
                         return false;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
@@ -476,8 +476,8 @@ public class Scenes {
                 }
                 for (int i=0;i<HOURS;i++)
                     for (int j=0;j<DAYS;j++){
-                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
-                            professor.setActivityProfesor(semester,i,j,-1);
+                        if (activity.getIdActivity()==professor.getActivityProfessor(semester,i,j))
+                            professor.setActivityProfessor(semester,i,j,-1);
                         for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
                             if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
@@ -503,7 +503,7 @@ public class Scenes {
                             break;
                         }
                     }
-                    professor.setActivityProfesor(semester,Y-1, X-1, activity.getIdActivity());
+                    professor.setActivityProfessor(semester,Y-1, X-1, activity.getIdActivity());
                     for (int j = 0; j<activity.getGroupsId().length; j++)
                         groups.get(activity.getGroupsId()[j]).setActivityGroup(semester,Y-1, X-1, activity.getIdActivity());
                 }
@@ -531,8 +531,8 @@ public class Scenes {
                 }
                 for (int i=0;i<HOURS;i++)
                     for (int j=0;j<DAYS;j++){
-                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
-                            professor.setActivityProfesor(semester,i,j,-1);
+                        if (activity.getIdActivity()==professor.getActivityProfessor(semester,i,j))
+                            professor.setActivityProfessor(semester,i,j,-1);
                         for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
                             if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
@@ -555,7 +555,7 @@ public class Scenes {
                             break;
                         }
                     }
-                    professor.setActivityProfesor(semester,Y-1, X-1, activity.getIdActivity());
+                    professor.setActivityProfessor(semester,Y-1, X-1, activity.getIdActivity());
                     for (int j = 0; j<activity.getGroupsId().length; j++)
                         groups.get(activity.getGroupsId()[j]).setActivityGroup(semester,Y-1, X-1, activity.getIdActivity());
                 }
@@ -624,7 +624,7 @@ public class Scenes {
                 for (int t=0;t<time;t++) {
                     X=row+(t%2)*add;
                     Y=col+(t+1)/2;
-                    if (professor.getActivityProfesor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
+                    if (professor.getActivityProfessor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
                         return null;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
@@ -640,7 +640,7 @@ public class Scenes {
                 for (int t=0;t<time;t++) {
                     X=row+t%2;
                     Y=col+t/2;
-                    if (professor.getActivityProfesor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
+                    if (professor.getActivityProfessor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
                         return null;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
@@ -711,8 +711,8 @@ public class Scenes {
                 }
                 for (int i=0;i<HOURS;i++) {
                     for (int j=0;j<DAYS;j++) {
-                        if (activity.getIdActivity() == professor.getActivityProfesor(semester, i, j))
-                            professor.setActivityProfesor(semester, i, j, -1);
+                        if (activity.getIdActivity() == professor.getActivityProfessor(semester, i, j))
+                            professor.setActivityProfessor(semester, i, j, -1);
                         for (int k = 0; k < Objects.requireNonNull(activity).getGroupsId().length; k++)
                             if (activity.getIdActivity() == groups.get(activity.getGroupsId()[k]).getActivityGroup(semester, i, j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester, i, j, -1);
@@ -745,7 +745,7 @@ public class Scenes {
                         if (add==-1)
                             pair=1;
                         else pair=0;
-                        professor.setActivityProfesor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row+pair, activity.getIdActivity());
+                        professor.setActivityProfessor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row+pair, activity.getIdActivity());
                         for (int j = 0; j < activity.getGroupsId().length; j++)
                             groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row+pair, activity.getIdActivity());
                     }
@@ -776,8 +776,8 @@ public class Scenes {
                 }
                 for (int i=0;i<HOURS;i++)
                     for (int j=0;j<DAYS;j++){
-                        if (activity.getIdActivity()==professor.getActivityProfesor(semester,i,j))
-                            professor.setActivityProfesor(semester,i,j,-1);
+                        if (activity.getIdActivity()==professor.getActivityProfessor(semester,i,j))
+                            professor.setActivityProfessor(semester,i,j,-1);
                         for (int k = 0; k< Objects.requireNonNull(activity).getGroupsId().length; k++)
                             if (activity.getIdActivity()==groups.get(activity.getGroupsId()[k]).getActivityGroup(semester,i,j))
                                 groups.get(activity.getGroupsId()[k]).setActivityGroup(semester,i,j,-1);
@@ -803,7 +803,7 @@ public class Scenes {
                                 break;
                             }
                         }
-                        professor.setActivityProfesor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row, activity.getIdActivity());
+                        professor.setActivityProfessor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row, activity.getIdActivity());
                         for (int j = 0; j < activity.getGroupsId().length; j++)
                             groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row, activity.getIdActivity());
                     }

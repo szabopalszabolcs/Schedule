@@ -13,6 +13,7 @@ public class Activity {
     private final int yearOfStudy;
     private final int time;
     private final boolean weekly;
+    private int classRoomId;
 
     public Activity(int idActivity, String subject, String codeSubject, int professorId, int tip, int[] groupsId, int semester, int yearOfStudy, int time, boolean weekly){
         this.idActivity=idActivity;
@@ -25,6 +26,7 @@ public class Activity {
         this.yearOfStudy = yearOfStudy;
         this.time = time;
         this.weekly = weekly;
+        this.classRoomId =-1;
     }
 
     @Override
@@ -94,6 +96,12 @@ public class Activity {
         catch (Exception ex) {
             return "X";
         }
+    }
+
+    public int getClassRoomId() { return classRoomId; }
+
+    public void setClassRoomId(int classRoom) {
+        this.classRoomId =classRoom;
     }
 
 }

@@ -57,7 +57,7 @@ public class MainMenu {
                 groupCombo.getItems().clear();
                 readFileText.setText("Data read ok");
                 for (Professor professor : professors) {
-                    profCombo.getItems().add(professor.getIdProfesor()+" "+ professor.getName());
+                    profCombo.getItems().add(professor.getIdProfessor()+" "+ professor.getName());
                 }
                 for (Group group:groups){
                     groupCombo.getItems().add(group.getIdGroup()+" "+group.getGroupName());

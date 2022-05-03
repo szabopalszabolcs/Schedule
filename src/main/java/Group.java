@@ -2,7 +2,7 @@ public class Group {
 
     private int idGroup;
     private String groupName;
-    private int[][][] scheduleGroup;
+    private final int[][][] scheduleGroup;
     private int[] activitiesOfGroup;
     private String speciality;
     private int year;
@@ -78,6 +78,7 @@ public class Group {
             return false;
         }
     }
+
     public void addActivity (int activity) {
         int size=activitiesOfGroup.length;
         int[] newActivities=new int[size+1];

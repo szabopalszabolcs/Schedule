@@ -44,7 +44,7 @@ public class Utility {
                 return nextProfessor;
             }
         }
-        professor.setIdProfesor(profIndex);
+        professor.setIdProfessor(profIndex);
         professors.add(professor);
         profIndex++;
         return professor;
@@ -83,7 +83,7 @@ public class Utility {
                 activityTime=(float) actTotal/fAct/2;
             activityTime*=2;
             if (activityTime<1) activityTime=1;
-            Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfesor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
+            Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfessor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
             if(numberOfCourses==-1){
                 for (Activity nextActivity:activities){
                     if((newActivity.getSubject().equals(nextActivity.getSubject())&&(nextActivity.getType()==1))){
@@ -331,7 +331,7 @@ public class Utility {
             groupId[i]=groups.get(i).getIdGroup();
         }
 
-        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfessor(),groupId);
 
         int time=currentActivity.getTime();
         lbl.setPrefSize(80,40*time);
@@ -365,7 +365,7 @@ public class Utility {
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
         }
-        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfesor(),groupId);
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfessor(),groupId);
         lbl.setPrefSize(60, 25);
         lbl.setFont(Font.font(8));
         lbl.setTextAlignment(TextAlignment.CENTER);
