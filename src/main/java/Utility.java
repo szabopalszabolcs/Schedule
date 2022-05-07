@@ -350,6 +350,23 @@ public class Utility {
         return groups;
     }
 
+    public static ArrayList<Room> loadRooms(String file) {
+
+        ArrayList<Room> rooms=new ArrayList<>();
+        Gson gson=new Gson();
+        try {
+            Reader rmReader = Files.newBufferedReader(Paths.get(file));
+            rooms = gson.fromJson(rmReader, new TypeToken<ArrayList<Group>>() {}.getType());
+            rmReader.close();
+            Utility.message("Citire grupe reușită");
+        }
+        catch (Exception ex) {
+            Utility.message("Citire grupe eșuată");
+            return null;
+        }
+        return rooms;
+    }
+
     public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) throws IOException {
 
         Gson gson = new GsonBuilder()
@@ -379,10 +396,20 @@ public class Utility {
             FileWriter groupWriter=new FileWriter(file+".grp");
             gson.toJson(groups,groupWriter);
             groupWriter.close();
+            }
+        catch (Exception ex) {
+            Utility.message("Salvare grupe eșuată");
+            return false;
+        }
+
+        try {
+            FileWriter roomWriter=new FileWriter(file+".rm");
+            gson.toJson(groups,roomWriter);
+            roomWriter.close();
             Utility.message("Salvare reușită");
         }
         catch (Exception ex) {
-            Utility.message("Salvare grupe eșuată");
+            Utility.message("Salvare săli eșuată");
             return false;
         }
 

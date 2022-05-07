@@ -101,6 +101,7 @@ public class MainMenu {
                 activities=Utility.loadActivities(fileName+".act");
                 professors=Utility.loadProfessors(fileName+".prf");
                 groups=Utility.loadGroups(fileName+".grp");
+                rooms=Utility.loadRooms(fileName+".rm");
                 profCombo.getItems().clear();
                 groupCombo.getItems().clear();
                 Utility.message("Datele au fost citite cu succes");
