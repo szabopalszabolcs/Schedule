@@ -489,4 +489,13 @@ public class Utility {
         System.out.println(message);
     }
 
+    public static int maxYear(ArrayList<Activity> activities) {
+        int max=0;
+        for (Activity activity:activities) {
+            if (activity.getYearOfStudy()>max) {
+                max=activity.getYearOfStudy();
+            }
+        }
+        return max;
+    }
 }

@@ -1,17 +1,5 @@
 [
   {
-    "idProfessor": 0,
-    "name": "ALDEA Nicoleta Codruta",
-    "shortName": "Aldea_N_C",
-    "activitiesOfProfessor": [
-      0,
-      1,
-      2,
-      35,
-      36,
-      431,
-      432
-    ],
     "scheduleProfessor": [
       [
         [
@@ -213,10 +201,223 @@
           -1
         ]
       ]
-    ]
+    ],
+    "name": "ALDEA Nicoleta Codruta",
+    "shortName": "Aldea_N_C",
+    "activitiesOfProfessor": [
+      0,
+      1,
+      2,
+      35,
+      36,
+      431,
+      432
+    ],
+    "idProfessor": 0
   },
   {
-    "idProfessor": 1,
+    "scheduleProfessor": [
+      [
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          54,
+          54,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          457,
+          457,
+          -1,
+          -1,
+          -1,
+          -1,
+          3,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          3,
+          3,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          4,
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ]
+      ],
+      [
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ]
+      ]
+    ],
     "name": "PALTANEA Eugen",
     "shortName": "Paltanea_E",
     "activitiesOfProfessor": [
@@ -233,6 +434,9 @@
       458,
       459
     ],
+    "idProfessor": 1
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -245,54 +449,12 @@
           -1,
           -1,
           -1,
-          3,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          3,
-          3,
-          -1,
-          -1
-        ],
-        [
-          54,
-          54,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
           -1,
           -1,
           -1
         ],
         [
-          457,
-          457,
           -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          4,
           -1,
           -1,
           -1,
@@ -306,8 +468,50 @@
           -1
         ],
         [
-          4,
-          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        [
+          -1,
+          -1,
           -1,
           -1,
           -1,
@@ -434,10 +638,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 2,
+    ],
     "name": "MINCULETE Nicusor",
     "shortName": "Minculete_N",
     "activitiesOfProfessor": [
@@ -450,6 +651,9 @@
       455,
       456
     ],
+    "idProfessor": 2
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -651,10 +855,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 3,
+    ],
     "name": "MONESCU Vlad",
     "shortName": "Monescu_V",
     "activitiesOfProfessor": [
@@ -679,6 +880,9 @@
       396,
       397
     ],
+    "idProfessor": 3
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -880,10 +1084,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 4,
+    ],
     "name": "PLAJER Ioana",
     "shortName": "Plajer_I",
     "activitiesOfProfessor": [
@@ -908,6 +1109,9 @@
       352,
       353
     ],
+    "idProfessor": 4
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -1109,10 +1313,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 5,
+    ],
     "name": "PALTANEA Radu",
     "shortName": "Paltanea_R",
     "activitiesOfProfessor": [
@@ -1125,6 +1326,9 @@
       450,
       451
     ],
+    "idProfessor": 5
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -1326,10 +1530,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 6,
+    ],
     "name": "DIMITRIU Maria",
     "shortName": "Dimitriu_M",
     "activitiesOfProfessor": [
@@ -1342,6 +1543,9 @@
       80,
       236
     ],
+    "idProfessor": 6
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -1543,10 +1747,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 7,
+    ],
     "name": "VOICU Nicoleta",
     "shortName": "Voicu_N",
     "activitiesOfProfessor": [
@@ -1559,6 +1760,9 @@
       442,
       452
     ],
+    "idProfessor": 7
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -1760,10 +1964,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 8,
+    ],
     "name": "FLOREA Ion",
     "shortName": "Florea_I",
     "activitiesOfProfessor": [
@@ -1781,6 +1982,9 @@
       388,
       389
     ],
+    "idProfessor": 8
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -1982,10 +2186,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 9,
+    ],
     "name": "VASILESCU Anca",
     "shortName": "Vasilescu_A",
     "activitiesOfProfessor": [
@@ -2014,6 +2215,9 @@
       512,
       513
     ],
+    "idProfessor": 9
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -2215,10 +2419,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 10,
+    ],
     "name": "MANEA Adelina",
     "shortName": "Manea_A",
     "activitiesOfProfessor": [
@@ -2239,6 +2440,9 @@
       372,
       373
     ],
+    "idProfessor": 10
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -2440,10 +2644,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 11,
+    ],
     "name": "MARIN Marin",
     "shortName": "Marin_M",
     "activitiesOfProfessor": [
@@ -2458,6 +2659,9 @@
       460,
       461
     ],
+    "idProfessor": 11
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -2659,10 +2863,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 12,
+    ],
     "name": "RADUCANU Dorina",
     "shortName": "Raducanu_D",
     "activitiesOfProfessor": [
@@ -2674,6 +2875,9 @@
       434,
       453
     ],
+    "idProfessor": 12
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -2875,10 +3079,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 13,
+    ],
     "name": "BOCU Razvan",
     "shortName": "Bocu_R",
     "activitiesOfProfessor": [
@@ -2903,6 +3104,9 @@
       516,
       517
     ],
+    "idProfessor": 13
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -3104,10 +3308,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 14,
+    ],
     "name": "DUCA Delia",
     "shortName": "Duca_D",
     "activitiesOfProfessor": [
@@ -3132,6 +3333,9 @@
       332,
       333
     ],
+    "idProfessor": 14
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -3333,10 +3537,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 15,
+    ],
     "name": "ISAIA Florin",
     "shortName": "Isaia_F",
     "activitiesOfProfessor": [
@@ -3345,6 +3546,9 @@
       57,
       58
     ],
+    "idProfessor": 15
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -3546,10 +3750,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 16,
+    ],
     "name": "POPESCU Ovidiu",
     "shortName": "Popescu_O",
     "activitiesOfProfessor": [
@@ -3558,6 +3759,9 @@
       429,
       430
     ],
+    "idProfessor": 16
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -3759,10 +3963,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 17,
+    ],
     "name": "STAN Gabriel",
     "shortName": "Stan_G",
     "activitiesOfProfessor": [
@@ -3778,6 +3979,9 @@
       253,
       254
     ],
+    "idProfessor": 17
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -3979,10 +4183,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 18,
+    ],
     "name": "PARVULESCU Carmen",
     "shortName": "Parvulescu_C",
     "activitiesOfProfessor": [
@@ -3994,6 +4195,9 @@
       355,
       356
     ],
+    "idProfessor": 18
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -4195,10 +4399,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 19,
+    ],
     "name": "PASCU Mihai",
     "shortName": "Pascu_M",
     "activitiesOfProfessor": [
@@ -4210,6 +4411,9 @@
       439,
       440
     ],
+    "idProfessor": 19
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -4411,10 +4615,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 20,
+    ],
     "name": "BAICOIANU Alexandra",
     "shortName": "Baicoianu_A",
     "activitiesOfProfessor": [
@@ -4439,6 +4640,9 @@
       280,
       281
     ],
+    "idProfessor": 20
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -4640,10 +4844,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 21,
+    ],
     "name": "MAJERCSIK Luciana",
     "shortName": "Majercsik_L",
     "activitiesOfProfessor": [
@@ -4676,6 +4877,9 @@
       499,
       500
     ],
+    "idProfessor": 21
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -4877,10 +5081,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 22,
+    ],
     "name": "DEACONU Adrian",
     "shortName": "Deaconu_A",
     "activitiesOfProfessor": [
@@ -4898,6 +5099,9 @@
       510,
       511
     ],
+    "idProfessor": 22
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -5099,10 +5303,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 23,
+    ],
     "name": "CIUPALA Laura",
     "shortName": "Ciupala_L",
     "activitiesOfProfessor": [
@@ -5119,6 +5320,9 @@
       520,
       521
     ],
+    "idProfessor": 23
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -5320,10 +5524,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 24,
+    ],
     "name": "IONESCU Alexandru Codrin",
     "shortName": "Ionescu_A_C",
     "activitiesOfProfessor": [
@@ -5343,6 +5544,9 @@
       260,
       403
     ],
+    "idProfessor": 24
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -5544,10 +5748,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 25,
+    ],
     "name": "CHIRILA Adina",
     "shortName": "Chirila_A",
     "activitiesOfProfessor": [
@@ -5559,6 +5760,9 @@
       140,
       299
     ],
+    "idProfessor": 25
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -5760,10 +5964,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 26,
+    ],
     "name": "NANAU Corina",
     "shortName": "Nanau_C",
     "activitiesOfProfessor": [
@@ -5780,6 +5981,9 @@
       302,
       303
     ],
+    "idProfessor": 26
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -5981,10 +6185,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 27,
+    ],
     "name": "NISTOR-SERBAN Andreea",
     "shortName": "Nistor-serban_A",
     "activitiesOfProfessor": [
@@ -6009,6 +6210,9 @@
       305,
       306
     ],
+    "idProfessor": 27
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -6210,10 +6414,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 28,
+    ],
     "name": "DUMITRESCU Silviu",
     "shortName": "Dumitrescu_S",
     "activitiesOfProfessor": [
@@ -6233,6 +6434,9 @@
       508,
       509
     ],
+    "idProfessor": 28
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -6434,10 +6638,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 29,
+    ],
     "name": "GEORGESCU Oana",
     "shortName": "Georgescu_O",
     "activitiesOfProfessor": [
@@ -6448,6 +6649,9 @@
       209,
       210
     ],
+    "idProfessor": 29
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -6649,10 +6853,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 30,
+    ],
     "name": "ALDEA Constantin",
     "shortName": "Aldea_C",
     "activitiesOfProfessor": [
@@ -6670,6 +6871,9 @@
       536,
       537
     ],
+    "idProfessor": 30
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -6871,10 +7075,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 31,
+    ],
     "name": "KERESTELY Arpad",
     "shortName": "Kerestely_A",
     "activitiesOfProfessor": [
@@ -6885,6 +7086,9 @@
       313,
       314
     ],
+    "idProfessor": 31
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -7086,10 +7290,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 32,
+    ],
     "name": "TABIRCA Sabin Marius",
     "shortName": "Tabirca_S_M",
     "activitiesOfProfessor": [
@@ -7107,6 +7308,9 @@
       474,
       475
     ],
+    "idProfessor": 32
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -7308,10 +7512,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 33,
+    ],
     "name": "SASU Lucian Mircea",
     "shortName": "Sasu_L_M",
     "activitiesOfProfessor": [
@@ -7324,6 +7525,9 @@
       485,
       486
     ],
+    "idProfessor": 33
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -7525,10 +7729,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 34,
+    ],
     "name": "BOCU Dorin",
     "shortName": "Bocu_D",
     "activitiesOfProfessor": [
@@ -7549,6 +7750,9 @@
       470,
       471
     ],
+    "idProfessor": 34
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -7750,10 +7954,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 35,
+    ],
     "name": "SANGEORZAN Livia",
     "shortName": "Sangeorzan_L",
     "activitiesOfProfessor": [
@@ -7770,6 +7971,9 @@
       531,
       544
     ],
+    "idProfessor": 35
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -7971,10 +8175,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 36,
+    ],
     "name": "NEDELCU Claudiu",
     "shortName": "Nedelcu_C",
     "activitiesOfProfessor": [
@@ -7996,6 +8197,9 @@
       428,
       543
     ],
+    "idProfessor": 36
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -8197,10 +8401,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 37,
+    ],
     "name": "NEPOTU Gabriel",
     "shortName": "Nepotu_G",
     "activitiesOfProfessor": [
@@ -8211,6 +8412,9 @@
       220,
       221
     ],
+    "idProfessor": 37
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -8412,10 +8616,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 38,
+    ],
     "name": "ICHIM Vasile",
     "shortName": "Ichim_V",
     "activitiesOfProfessor": [
@@ -8428,6 +8629,9 @@
       344,
       345
     ],
+    "idProfessor": 38
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -8629,10 +8833,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 39,
+    ],
     "name": "GALMEANU Honorius Cezar",
     "shortName": "Galmeanu_H_C",
     "activitiesOfProfessor": [
@@ -8649,6 +8850,9 @@
       514,
       515
     ],
+    "idProfessor": 39
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -8850,10 +9054,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 40,
+    ],
     "name": "CARSTEA Claudia Georgeta",
     "shortName": "Carstea_C_G",
     "activitiesOfProfessor": [
@@ -8864,6 +9065,9 @@
       368,
       427
     ],
+    "idProfessor": 40
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -9065,10 +9269,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 41,
+    ],
     "name": "SASU Adela",
     "shortName": "Sasu_A",
     "activitiesOfProfessor": [
@@ -9079,6 +9280,9 @@
       482,
       483
     ],
+    "idProfessor": 41
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -9280,10 +9484,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 42,
+    ],
     "name": "ENACHE DAVID Nicoleta",
     "shortName": "Enache_D_N",
     "activitiesOfProfessor": [
@@ -9297,6 +9498,9 @@
       545,
       546
     ],
+    "idProfessor": 42
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -9498,10 +9702,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 43,
+    ],
     "name": "PETRESCU Laura",
     "shortName": "Petrescu_L",
     "activitiesOfProfessor": [
@@ -9509,6 +9710,9 @@
       381,
       382
     ],
+    "idProfessor": 43
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -9710,10 +9914,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 44,
+    ],
     "name": "BUTNARU Daniel-Tiberiu",
     "shortName": "Butnaru_D",
     "activitiesOfProfessor": [
@@ -9726,6 +9927,9 @@
       522,
       523
     ],
+    "idProfessor": 44
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -9927,10 +10131,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 45,
+    ],
     "name": "CEPOI Igor",
     "shortName": "Cepoi_I",
     "activitiesOfProfessor": [
@@ -9940,6 +10141,9 @@
       528,
       529
     ],
+    "idProfessor": 45
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -10141,16 +10345,16 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 46,
+    ],
     "name": "KROGER Reinhold_CAS",
     "shortName": "Kroger_R",
     "activitiesOfProfessor": [
       419,
       420
     ],
+    "idProfessor": 46
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -10352,10 +10556,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 47,
+    ],
     "name": "LITZ Peter",
     "shortName": "Litz_P",
     "activitiesOfProfessor": [
@@ -10364,6 +10565,9 @@
       538,
       539
     ],
+    "idProfessor": 47
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -10565,16 +10769,16 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 48,
+    ],
     "name": "DORNER Rolf_CAS",
     "shortName": "Dorner_R",
     "activitiesOfProfessor": [
       423,
       424
     ],
+    "idProfessor": 48
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -10776,16 +10980,16 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 49,
+    ],
     "name": "MICULESCU Radu",
     "shortName": "Miculescu_R",
     "activitiesOfProfessor": [
       462,
       463
     ],
+    "idProfessor": 49
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -10987,16 +11191,16 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 50,
+    ],
     "name": "STREITFERDT_CAS",
     "shortName": "Streitferdt_cas",
     "activitiesOfProfessor": [
       532,
       533
     ],
+    "idProfessor": 50
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -11198,16 +11402,16 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 51,
+    ],
     "name": "DEBES_CAS",
     "shortName": "Debes_cas",
     "activitiesOfProfessor": [
       534,
       535
     ],
+    "idProfessor": 51
+  },
+  {
     "scheduleProfessor": [
       [
         [
@@ -11409,10 +11613,7 @@
           -1
         ]
       ]
-    ]
-  },
-  {
-    "idProfessor": 52,
+    ],
     "name": "KARSTEN_CAS",
     "shortName": "Karsten_cas",
     "activitiesOfProfessor": [
@@ -11420,207 +11621,6 @@
       541,
       542
     ],
-    "scheduleProfessor": [
-      [
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ]
-      ],
-      [
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ],
-        [
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1
-        ]
-      ]
-    ]
+    "idProfessor": 52
   }
 ]

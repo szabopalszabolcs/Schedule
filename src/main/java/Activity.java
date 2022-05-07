@@ -92,6 +92,8 @@ public class Activity {
         return semester;
     }
 
+    public int getYearOfStudy() { return yearOfStudy; }
+
     public int getIdActivity() {
         return idActivity;
     }

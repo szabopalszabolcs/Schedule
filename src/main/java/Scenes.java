@@ -112,7 +112,6 @@ public class Scenes {
             classesGrid.add(pane, i % sqr, i / sqr);
         }
 
-
         classesGrid.setGridLinesVisible(true);
         scheduleGrid.setGridLinesVisible(true);
         horizontalBox.getChildren().addAll(scheduleGrid,classesGrid);
