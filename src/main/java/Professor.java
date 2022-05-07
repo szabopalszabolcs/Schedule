@@ -1,10 +1,11 @@
 public class Professor {
 
+
     private final int[][][] scheduleProfessor;
     private final String name;
     private String shortName;
-    private int idProfessor;
     private int[] activitiesOfProfessor;
+    private int idProfessor;
 
     public Professor(int id, String name){
         final int HOURS=7,DAYS=12;
@@ -23,15 +24,25 @@ public class Professor {
         activitiesOfProfessor = new int[0];
     }
 
-    public int getIdProfessor() { return idProfessor; }
+    public int getIdProfessor() {
+        return idProfessor;
+    }
 
-    public void setIdProfessor(int id) { this.idProfessor =id; }
+    public void setIdProfessor(int id) {
+        this.idProfessor=id;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getShortName() { return shortName; }
+    public String getShortName() {
+        return shortName;
+    }
 
-    public int[] getActivitiesOfProfessor() { return activitiesOfProfessor; }
+    public int[] getActivitiesOfProfessor() {
+        return activitiesOfProfessor;
+    }
 
     public int getActivityProfessor(int semester, int hour, int day) {
         try {
@@ -48,7 +59,7 @@ public class Professor {
             return true;
         }
         catch (Exception ex){
-            Utility.errorMessage("Activitatea nu a fost adăugată");
+            Utility.message("Activitatea nu a fost adăugată");
             return false;
         }
     }
@@ -79,7 +90,7 @@ public class Professor {
                 }
             }
             catch (Exception ex) {
-                Utility.errorMessage("Activitatea nu a fost ștearsă");
+                Utility.message("Activitatea nu a fost ștearsă");
                 return false;
             }
         }

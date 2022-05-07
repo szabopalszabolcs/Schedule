@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 
 public class MainMenu {
@@ -12,17 +13,15 @@ public class MainMenu {
     ArrayList<Professor> professors = new ArrayList<>();
     ArrayList<Group> groups = new ArrayList<>();
     ArrayList<Activity> activities = new ArrayList<>();
+    ArrayList<Room> rooms = new ArrayList<>();
     Scenes scenes;
 
     public void createMainMenu() {
 
         String file = "data/MIN 2019 sept 30.xls";
         String faculty = "MI";
-
         Stage mainStage=new Stage();
-
         Integer[] years={1,2,3};
-
         VBox mainBox=new VBox();
         mainBox.setPadding(new Insets(10,10,10,10));
         mainBox.setSpacing(5);
@@ -45,38 +44,37 @@ public class MainMenu {
         yearCombo.getItems().addAll(years);
         yearCombo.setValue(years[0]);
         Button chooseYear =new Button("Choose Year");
+
         readFile.setOnAction(event -> {
-            readFileText.setText("Please wait ... reading data");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
+            professors.clear();
+            groups.clear();
             activities = Utility.readXls(file, professors, groups, faculty);
             if (activities!=null) {
                 profCombo.getItems().clear();
                 groupCombo.getItems().clear();
-                readFileText.setText("Data read ok");
+                Utility.message("Datele au fost citite cu succes");
                 for (Professor professor : professors) {
-                    profCombo.getItems().add(professor.getIdProfessor()+" "+ professor.getName());
+                    profCombo.getItems().add(professor.getName());
                 }
                 for (Group group:groups){
-                    groupCombo.getItems().add(group.getIdGroup()+" "+group.getGroupName());
+                    groupCombo.getItems().add(group.getGroupName());
                 }
                 scenes =new Scenes(professors,activities,groups);
             }
-            else readFileText.setText("Data read failure");
+            else Utility.message("Citire date eșuată");
         });
+
         chooseProfesor.setOnAction(event -> {
             try{
                 int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
                 int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                //scenes.professorsClassesScene(indexSelected,semester);
                 scenes.professorsScheduleScene(indexSelected,semester);
             }
             catch (Exception ex){
-                System.out.println("Can't generate scene");
+                Utility.message("Generare orar eșuată");
             }
         });
+
         chooseYear.setOnAction(event -> {
             try{
                 int yearSelected=yearCombo.getSelectionModel().getSelectedItem();
@@ -84,36 +82,40 @@ public class MainMenu {
                 scenes.yearScheduleScene(yearSelected,semester);
             }
             catch (Exception ex){
-                System.out.println("Can't generate scene");
-            }
-        });
-/*        chooseGroup.setOnAction(event -> {
-            try{
-                int indexSelected=groupCombo.getSelectionModel().getSelectedIndex();
-                new ScheduleGroup(groups.get(indexSelected),semesterCombo.getSelectionModel().getSelectedItem()).generateScene();
-                System.out.println(groups.get(indexSelected)+" "+semesterCombo.getSelectionModel().getSelectedItem());
-            }
-            catch (Exception ex){
-                System.out.println("Can't generate scene");
+                Utility.message("Generare orar eșuată");
             }
         });
 
- */       saveData.setOnAction(event -> {
+        saveData.setOnAction(event -> {
             try {
                 Utility.saveData("data/savedfile", professors,groups,activities);
             }
             catch (Exception ex){
-                System.out.println("Saving failed");
+                Utility.message("Salvare date eșuată");
             }
         });
- /*       loadData.setOnAction(event -> {
+
+        loadData.setOnAction(event -> {
             try {
-                boolean ok=Utility.loadData("data/savedfile.prf",profesors,groups);
+                String fileName="data/savedfile";
+                activities=Utility.loadActivities(fileName+".act");
+                professors=Utility.loadProfessors(fileName+".prf");
+                groups=Utility.loadGroups(fileName+".grp");
+                profCombo.getItems().clear();
+                groupCombo.getItems().clear();
+                Utility.message("Datele au fost citite cu succes");
+                for (Professor professor : professors) {
+                    profCombo.getItems().add(professor.getName());
+                }
+                for (Group group:groups){
+                    groupCombo.getItems().add(group.getGroupName());
+                }
+                scenes = new Scenes(professors,activities,groups);
             }
             catch (Exception ex){
-                System.out.println("Load failed");
+                Utility.message("Citire date eșuată");
             }
-        });*/
+        });
 
         exit.setOnAction(event -> {
             Platform.exit();

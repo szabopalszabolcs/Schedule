@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import javafx.geometry.Pos;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -7,7 +8,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 class NoSheetException extends Exception{
     NoSheetException(String ex){
@@ -16,6 +20,10 @@ class NoSheetException extends Exception{
 }
 
 public class Utility {
+
+    private Utility() {
+        throw new UnsupportedOperationException();
+    }
 
     static int profIndex=0,groupIndex=0,activityIndex=0;
 
@@ -26,94 +34,16 @@ public class Utility {
         return d;
     }
 
-    static Group addIfNotInGroup(Group group,ArrayList<Group> groups){
-        for (Group nextGroup:groups){
-            if (group.getGroupName().equals(nextGroup.getGroupName())){
-                return nextGroup;
-            }
-        }
-        group.setIdGroup(groupIndex);
-        groups.add(group);
-        groupIndex++;
-        return group;
-    }
-
-    static Professor addIfNotInProfs(Professor professor, ArrayList<Professor> professors) {
-        for (Professor nextProfessor : professors) {
-            if (professor.getName().equals(nextProfessor.getName())) {
-                return nextProfessor;
-            }
-        }
-        professor.setIdProfessor(profIndex);
-        professors.add(professor);
-        profIndex++;
-        return professor;
-    }
-
-    static void errorMessage(String message){
-
-
-        System.out.println(message);
-    }
-
-    static void createActivities(ArrayList<Activity> activities, ArrayList<Professor> professors, ArrayList<Group> groups, int profNumber, int numberOfGroups, int fAct, Group[][] actualGroups, String subject, String codeSubject, Professor[] actualProfs, int type, int semester, int year, int actTotal, int[] actTime, int numberOfCourses) {
-
-        float nrAct=(float) fAct*actTime[profNumber]/actTotal;
-
-        for (int j = 0; j < nrAct ; j++) {
-            int groupTeam = (numberOfGroups/fAct);
-            Group[] groupsToAdd = new Group[groupTeam];
-            int[] groupIdToAdd=new int[groupTeam];
-            int k = 0, l = 0;
-            while (k < groupTeam) {
-                if (actualGroups[type-1][j + k + l]!=null) {
-                    groupsToAdd[k] = actualGroups[type-1][j + k + l];
-                    groupIdToAdd[k] = actualGroups[type-1][j + k + l].getIdGroup();
-                    actualGroups[type-1][j + k + l]=null;
-                    k++;
-                }
-                else {
-                    l++;
-                }
-            }
-            float activityTime;
-            if (nrAct<1)
-                activityTime=(float) fAct/actTotal;
-            else
-                activityTime=(float) actTotal/fAct/2;
-            activityTime*=2;
-            if (activityTime<1) activityTime=1;
-            Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfessor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
-            if(numberOfCourses==-1){
-                for (Activity nextActivity:activities){
-                    if((newActivity.getSubject().equals(nextActivity.getSubject())&&(nextActivity.getType()==1))){
-                        nextActivity.addGroups(groupsToAdd);
-                    }
-                }
-            }
-            activities.add(newActivity);
-            professors.get(newActivity.getProfessorId()).addActivity(activities.indexOf(newActivity));
-            activityIndex++;
-            for (int group : newActivity.getGroupsId()) {
-                groups.get(group).addActivity(activities.indexOf(newActivity));
-            }
-            System.out.println(newActivity);
-        }
-
-    }
-
     public static ArrayList<Activity> readXls(String fileName, ArrayList<Professor> professors, ArrayList<Group> groups, String faculty){
 
         ArrayList<Activity> activities=new ArrayList<>();
         File file=new File(fileName);
-        professors.clear();
-        groups.clear();
+//        professors.clear();
+//        groups.clear();
         profIndex=0;
         groupIndex=0;
         activityIndex=0;
-
         try {
-
             FileInputStream fileInputStream = new FileInputStream(file);
             HSSFWorkbook hssfWorkbook = new HSSFWorkbook(fileInputStream);
             int numberOfSheets=hssfWorkbook.getNumberOfSheets();
@@ -129,11 +59,9 @@ public class Utility {
                 throw new NoSheetException("Sheet inexistent");
             }
             HSSFSheet hssfSheet=hssfWorkbook.getSheetAt(sheetToRead);
-
-    //start row
-
+//start row
             int r=10;
-            while (!hssfSheet.getRow(r).getCell(1).toString().equals("")/*&&(r<346)*/){
+            while (!hssfSheet.getRow(r).getCell(1).toString().equals("")){
                 Row firstRow=hssfSheet.getRow(r);
 
                 if (faculty.equals(firstRow.getCell(2).toString())){
@@ -177,6 +105,7 @@ public class Utility {
                         if (secondRow.getCell(16, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL) != null)
                             s2P = (int) secondRow.getCell(16).getNumericCellValue();
                         else s2P = 0;
+
                         int semester = 0;
                         if (s1C + s1S + s1L + s1P > 0) semester = 1;
                         else if (s2C + s2S + s2L + s2P > 0) semester = 2;
@@ -231,7 +160,6 @@ public class Utility {
 
                                 int numberOfGroups = max(fCrs, fSem, fLab, fPrc);
                                 Group[][] actualGroups = new Group[4][numberOfGroups * nrProfs];
-
                                 for (int i = 0; i < numberOfGroups; i++) {
                                     actualGroups[0][i] = new Group(0, speciality[0], year, i + 1);
                                     actualGroups[0][i] = addIfNotInGroup(actualGroups[0][i], groups);
@@ -246,7 +174,6 @@ public class Utility {
                                         }
                                     }
                                 }
-
                                 for (int i = 0; i < nrProfs; i++) {
                                     if (crsTime[i] > 0) {
                                         int type = 1;
@@ -266,7 +193,27 @@ public class Utility {
                                     }
                                 }
                                 if (s1C + s2C == 0) {
-                                    System.out.println("No course here " + subject);
+                                    List<Group> groupsToAddToCourse=new ArrayList<Group>();
+                                    boolean isIn;
+                                    for (Group newGroup:actualGroups[0]) {
+                                        isIn=false;
+                                        for(Group oldGroup:groupsToAddToCourse) {
+                                            if (oldGroup==newGroup) {
+                                                isIn=true;
+                                            }
+                                        }
+                                        if (!isIn) {
+                                            groupsToAddToCourse.add(newGroup);
+                                        }
+                                    }
+                                    Group[] groupsToAdd = groupsToAddToCourse.toArray(new Group[0]);
+                                    for (Activity completable:activities){
+                                        if (completable.getCodeSubject().equals(codeSubject)) {
+                                            if (completable.getType()==1) {
+                                                completable.addGroups(groupsToAdd);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -275,7 +222,6 @@ public class Utility {
                 r=r+2;
             }
         }
-
         catch (Exception ex){
             System.out.println(ex.toString());
             return null;
@@ -283,45 +229,167 @@ public class Utility {
         return activities;
     }
 
-    /*public static boolean loadData(String file, ArrayList<Profesor> profesors, ArrayList<Group> groups) throws IOException {
+    static Group addIfNotInGroup(Group group, ArrayList<Group> groups){
+        for (Group nextGroup:groups){
+            if (group.getGroupName().equals(nextGroup.getGroupName())){
+                return nextGroup;
+            }
+        }
+        group.setIdGroup(groupIndex);
+        groups.add(group);
+        groupIndex++;
+        return group;
+    }
 
-        profesors.clear();
-        groups.clear();
+    static Professor addIfNotInProfs(Professor professor, ArrayList<Professor> professors) {
+        for (Professor nextProfessor : professors) {
+            if (professor.getName().equals(nextProfessor.getName())) {
+                return nextProfessor;
+            }
+        }
+        professor.setIdProfessor(profIndex);
+        professors.add(professor);
+        profIndex++;
+        return professor;
+    }
+
+    static void createActivities(ArrayList<Activity> activities, ArrayList<Professor> professors, ArrayList<Group> groups, int profNumber, int numberOfGroups, int fAct, Group[][] actualGroups, String subject, String codeSubject, Professor[] actualProfs, int type, int semester, int year, int actTotal, int[] actTime, int numberOfCourses) {
+
+        float nrAct=(float) fAct*actTime[profNumber]/actTotal;
+
+        for (int j = 0; j < nrAct ; j++) {
+            int groupTeam = (numberOfGroups/fAct);
+            Group[] groupsToAdd = new Group[groupTeam];
+            int[] groupIdToAdd=new int[groupTeam];
+            int k = 0, l = 0;
+            while (k < groupTeam) {
+                if (actualGroups[type-1][j + k + l]!=null) {
+                    groupsToAdd[k] = actualGroups[type-1][j + k + l];
+                    groupIdToAdd[k] = actualGroups[type-1][j + k + l].getIdGroup();
+                    actualGroups[type-1][j + k + l]=null;
+                    k++;
+                }
+                else {
+                    l++;
+                }
+            }
+            float activityTime;
+            if (nrAct<1)
+                activityTime=(float) fAct/actTotal;
+            else
+                activityTime=(float) actTotal/fAct/2;
+            activityTime*=2;
+            if (activityTime<1) activityTime=1;
+            Activity newActivity = new Activity(activityIndex, subject, codeSubject, actualProfs[profNumber].getIdProfessor(), type, groupIdToAdd, semester, year, (int) activityTime, (activityTime >=2));
+            if(numberOfCourses==-1){
+                for (Activity nextActivity:activities){
+                    if((newActivity.getSubject().equals(nextActivity.getSubject())&&(nextActivity.getType()==1))){
+                        nextActivity.addGroups(groupsToAdd);
+                    }
+                }
+            }
+            activities.add(newActivity);
+            professors.get(newActivity.getProfessorId()).addActivity(activities.indexOf(newActivity));
+            activityIndex++;
+            for (int group : newActivity.getGroupsId()) {
+                groups.get(group).addActivity(activities.indexOf(newActivity));
+            }
+            System.out.println(newActivity);
+        }
+
+    }
+
+    public static ArrayList<Activity> loadActivities(String file) {
+
+        ArrayList<Activity> activities=new ArrayList<>();
+        Gson gson=new Gson();
         try {
-            XStream xStream=new XStream();
-            xStream.alias("profList", ProfList.class);
-            xStream.alias("profesor",Profesor.class);
-            File profFile=new File(file);
-            ProfList profList=(ProfList) xStream.fromXML(file);
-            profesors=profList.profesors;
+            Reader actReader = Files.newBufferedReader(Paths.get(file));
+            activities = gson.fromJson(actReader, new TypeToken<ArrayList<Activity>>() {}.getType());
+            actReader.close();
+            Utility.message("Citire activități reușită");
         }
-        catch (Exception ex){
-            out.println(ex.toString());
+        catch (Exception ex) {
+            Utility.message("Citire activități eșuată"+ex.toString());
+            return null;
         }
-        if (profesors.isEmpty()) return false;
-        return true;
-    }*/
+        return activities;
+    }
+
+    public static ArrayList<Professor> loadProfessors(String file) {
+
+        ArrayList<Professor> professors=new ArrayList<>();
+        Gson gson=new Gson();
+        try {
+            Reader profReader = Files.newBufferedReader(Paths.get(file));
+            professors = gson.fromJson(profReader, new TypeToken<ArrayList<Professor>>() {}.getType());
+            profReader.close();
+            Utility.message("Citire profesori reușită");
+        }
+        catch (Exception ex) {
+            Utility.message("Citire profesori eșuată");
+            return null;
+        }
+        return professors;
+    }
+
+    public static ArrayList<Group> loadGroups(String file) {
+
+        ArrayList<Group> groups=new ArrayList<>();
+        Gson gson=new Gson();
+        try {
+            Reader grpReader = Files.newBufferedReader(Paths.get(file));
+            groups = gson.fromJson(grpReader, new TypeToken<ArrayList<Group>>() {}.getType());
+            grpReader.close();
+            Utility.message("Citire grupe reușită");
+        }
+        catch (Exception ex) {
+            Utility.message("Citire grupe eșuată");
+            return null;
+        }
+        return groups;
+    }
 
     public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) throws IOException {
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
-        FileWriter fileWriter=new FileWriter(file);
-
         try {
-            gson.toJson(activities,fileWriter);
-            gson.toJson(professors,fileWriter);
-            gson.toJson(groups,fileWriter);
-            System.out.println("Date salvate");
-            fileWriter.close();
+            FileWriter actWriter=new FileWriter(file+".act");
+            gson.toJson(activities,actWriter);
+            actWriter.close();
         }
         catch (Exception ex) {
-            Utility.errorMessage("Clasa profesorilor nu a fost salavata");
+            Utility.message("Salvare activități eșuată");
             return false;
         }
+
+        try {
+            FileWriter profWriter=new FileWriter(file+".prf");
+            gson.toJson(professors,profWriter);
+            profWriter.close();
+        }
+        catch (Exception ex) {
+            Utility.message("Salvare profesori eșuată");
+            return false;
+        }
+
+        try {
+            FileWriter groupWriter=new FileWriter(file+".grp");
+            gson.toJson(groups,groupWriter);
+            groupWriter.close();
+            Utility.message("Salvare reușită");
+        }
+        catch (Exception ex) {
+            Utility.message("Salvare grupe eșuată");
+            return false;
+        }
+
         return true;
     }
+
+
 
     public static IndexedLabel createProfLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
 
@@ -389,7 +457,9 @@ public class Utility {
         return lbl;
     }
 
+    static void message(String message){
 
-
+        System.out.println(message);
+    }
 
 }

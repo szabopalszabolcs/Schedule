@@ -4,9 +4,9 @@ public class Group {
     private String groupName;
     private final int[][][] scheduleGroup;
     private int[] activitiesOfGroup;
-    private String speciality;
-    private int year;
-    private int groupNumber;
+    private final String speciality;
+    private final int year;
+    private final int groupNumber;
 
     public Group(int id, String speciality, int year, int groupNumber){
         final int HOURS = 7,DAYS = 12;
@@ -27,24 +27,8 @@ public class Group {
         return speciality;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
-    }
-
     public int getYear() {
         return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public int getGroupNumber() {
-        return groupNumber;
-    }
-
-    public void setGroupNumber(int groupNumber) {
-        this.groupNumber = groupNumber;
     }
 
     public String getGroupName(){
@@ -55,9 +39,13 @@ public class Group {
         this.groupName=name;
     }
 
-    public int getIdGroup() { return idGroup; }
+    public int getIdGroup() {
+        return idGroup;
+    }
 
-    public void setIdGroup(int id) { this.idGroup=id; }
+    public void setIdGroup(int id) {
+        this.idGroup=id;
+    }
 
     public int getActivityGroup(int semester,int hour,int day){
         try {
@@ -74,18 +62,23 @@ public class Group {
             return true;
         }
         catch (Exception ex){
-            Utility.errorMessage("Activitatea nu a fost adăugată");
+            Utility.message("Activitatea nu a fost adăugată");
             return false;
         }
     }
 
-    public void addActivity (int activity) {
+    public boolean addActivity (int activity) {
+        for (int act:activitiesOfGroup) {
+            if (activity==act)
+                return false;
+        }
         int size=activitiesOfGroup.length;
         int[] newActivities=new int[size+1];
         System.arraycopy(activitiesOfGroup, 0, newActivities, 0, size);
         newActivities[size]=activity;
         activitiesOfGroup=new int[size+1];
         System.arraycopy(newActivities, 0, activitiesOfGroup, 0, size + 1);
+        return true;
     }
 
     public boolean removeActivity (int activity) {
@@ -100,7 +93,7 @@ public class Group {
                 }
             }
             catch (Exception ex) {
-                Utility.errorMessage("Activitatea nu a fost ștearsă");
+                Utility.message("Activitatea nu a fost ștearsă");
                 return false;
             }
         }

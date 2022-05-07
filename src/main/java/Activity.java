@@ -44,7 +44,6 @@ public class Activity {
     }
 
     public void addGroups(Group[] newGroups){
-
         ArrayList<Integer> groupsToAdd=new ArrayList<>();
         for (int idGroup : groupsId) {
             groupsToAdd.add(idGroup);
@@ -63,7 +62,6 @@ public class Activity {
         for (int i=0;i<newGroup.length;i++)
             newGroup[i] = groupsToAdd.get(i);
         groupsId = newGroup;
-
     }
 
     public String getCodeSubject(){
@@ -74,19 +72,29 @@ public class Activity {
         return subject;
     }
 
-    public int getTime() { return time; }
+    public int getTime() {
+        return time;
+    }
 
     public int getType(){
         return type;
     }
 
-    public int getProfessorId() { return professorId; }
+    public int getProfessorId() {
+        return professorId;
+    }
 
-    public int[] getGroupsId() {return groupsId; }
+    public int[] getGroupsId() {
+        return groupsId;
+    }
 
-    public int getSemester() { return semester; }
+    public int getSemester() {
+        return semester;
+    }
 
-    public int getIdActivity() { return idActivity; }
+    public int getIdActivity() {
+        return idActivity;
+    }
 
     public String getTypeChar() {
         String[] typeChar={"C","S","L","P"};
@@ -98,7 +106,9 @@ public class Activity {
         }
     }
 
-    public int getClassRoomId() { return classRoomId; }
+    public int getClassRoomId() {
+        return classRoomId;
+    }
 
     public void setClassRoomId(int classRoom) {
         this.classRoomId =classRoom;
