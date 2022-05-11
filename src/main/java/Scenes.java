@@ -3,6 +3,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
@@ -21,13 +22,15 @@ public class Scenes {
     ArrayList<Activity> activities;
     ArrayList<Group> groups;
     ArrayList<Professor> professors;
+    ArrayList<Room> rooms;
     public static IndexedLabel draggingLabel;
     private final DataFormat labelFormat;
 
-    public Scenes(ArrayList<Professor> professors, ArrayList<Activity> activities, ArrayList<Group> groups) {
+    public Scenes(ArrayList<Professor> professors, ArrayList<Activity> activities, ArrayList<Group> groups, ArrayList<Room> rooms) {
         this.professors = professors;
         this.groups=groups;
         this.activities=activities;
+        this.rooms=rooms;
         DataFormat dataFormat = DataFormat.lookupMimeType("Unitbv");
         if (dataFormat==null)
             labelFormat=new DataFormat("Unitbv");
@@ -44,25 +47,44 @@ public class Scenes {
         GridPane scheduleGrid=new GridPane();
         StackPane[][] scheduleMatrix=new StackPane[HOURS+1][DAYS+1];
 
-        for (int i=0;i<HOURS+1;i++)
-            for (int j=0;j<DAYS+1;j++){
+        String[] ore={"Zi \\ Ora","8-9,50","10-11,50","12-13,50","14-15,50","16-17,50","18-19,50","20-21,50"};
+        String[] zile={"Luni","Marti","Miercuri","Joi","Vineri","Sambata"};
+
+        for (int i=0;i<HOURS+1;i++) {
+            scheduleMatrix[i][0]=new StackPane();
+            scheduleMatrix[i][0].setPrefSize(80,40);
+            scheduleMatrix[i][0].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            scheduleMatrix[i][0].getChildren().add(new Label((ore[i])));
+            scheduleGrid.add(scheduleMatrix[i][0], i, 0);
+        }
+
+        for (int j=1;j<DAYS/2+1;j++) {
+            scheduleMatrix[0][j]=new StackPane();
+            scheduleMatrix[0][j].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            scheduleMatrix[0][j].getChildren().add(new Label((zile[j-1])));
+            scheduleGrid.add(scheduleMatrix[0][j], 0, j*2-1,1,2);
+            System.out.println(j);
+        }
+
+
+        for (int i=1;i<HOURS+1;i++) {
+            for (int j=1;j<DAYS+1;j++){
                 scheduleMatrix[i][j]=new StackPane();
+                scheduleMatrix[i][j].setStyle("-fx-border-color:black");
                 scheduleMatrix[i][j].setPrefSize(80,40);
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
-                if (j==0 || i==0) scheduleMatrix[i][j].setBackground(HEADER);
-                else {
-                    addDropHandlingProfSchedule(scheduleMatrix[i][j]);
-                    int presentActivityId=professor.getActivityProfessor(semester,i-1,j-1);
-                    if (presentActivityId!=-1) {
-                        Activity presentActivity=activities.get(presentActivityId);
-                        IndexedLabel lbl=Utility.createProfLabel(presentActivity, professor, groups);
-                        scheduleMatrix[i][j].getChildren().add(lbl);
-                        dragTextArea(lbl);
-                        System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
-                    }
+                addDropHandlingProfSchedule(scheduleMatrix[i][j]);
+                int presentActivityId=professor.getActivityProfessor(semester,i-1,j-1);
+                if (presentActivityId!=-1) {
+                    Activity presentActivity=activities.get(presentActivityId);
+                    IndexedLabel lbl=Utility.createProfLabel(presentActivity, professor, groups);
+                    scheduleMatrix[i][j].getChildren().add(lbl);
+                    dragTextArea(lbl);
+                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,i - 1, j - 1)).getSubject() + " " + i + "," + j);
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
             }
+        }
 
         int nrActivities=0;
         for (int activity: professor.getActivitiesOfProfessor()) {
@@ -86,6 +108,7 @@ public class Scenes {
                 classesArray[count].setPrefWidth(80);
                 classesArray[count].setMinHeight(40);
                 classesArray[count].setAlignment(Pos.CENTER);
+                classesArray[count].setStyle("-fx-border-color:black");
                 addDropHandlingClasses(classesArray[count], professorId);
                 classesGrid.add(classesArray[count], count % sqr, count / sqr);
                 if (!onSchedule(professor.getActivitiesOfProfessor()[i], professorId, semester)) {
@@ -112,8 +135,6 @@ public class Scenes {
             classesGrid.add(pane, i % sqr, i / sqr);
         }
 
-        classesGrid.setGridLinesVisible(true);
-        scheduleGrid.setGridLinesVisible(true);
         horizontalBox.getChildren().addAll(scheduleGrid,classesGrid);
         horizontalBox.setPadding(new Insets(20,20,20,20));
         horizontalBox.setAlignment(Pos.CENTER);
@@ -141,94 +162,150 @@ public class Scenes {
 
         int numberOfGroups = groupsOfYear.size();
 
-        Stage scheduleStage=new Stage();
-        StackPane scheduleRoot=new StackPane();
-        GridPane scheduleGrid=new GridPane();
-        StackPane[][] scheduleMatrix=new StackPane[6*HOURS+4][numberOfGroups*4+1];
-        Scene scheduleScene=new Scene(scheduleRoot);
+        String[] legenda={"Anul","Specializarea","Grupa","Subgrupa"};
+        String[] ore={"8-9,50","10-11,50","12-13,50","14-15,50","16-17,50","18-19,50","20-21,50"};
+        String[] zile={"Luni","Marti","Miercuri","Joi","Vineri","Sambata"};
         Label textLabel;
 
-        String[] ore={"Anul","Specializarea","Grupa","Subgrupa","8-9,50","10-11,50","12-13,50","14-15,50","16-17,50","18-19,50","20-21,50"};
+        Stage scheduleStage=new Stage();
 
-        for (int i=0;i<6*HOURS+4;i++) {
-            scheduleMatrix[i][0]=new StackPane();
-            scheduleMatrix[i][0].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
-            if (i<4)
-                textLabel=new Label((ore[i]));
-            else
-                textLabel=new Label((ore[(i-4)%HOURS+4]));
+        GridPane windowGrid=new GridPane();
+        windowGrid.setAlignment(Pos.CENTER);
+        windowGrid.setPadding(new Insets(10,10,10,10));
+        windowGrid.getColumnConstraints().add(new ColumnConstraints(240));
+        windowGrid.getRowConstraints().add(new RowConstraints(50));
+
+        GridPane legendGrid=new GridPane();
+        legendGrid.setAlignment(Pos.CENTER);
+        StackPane[] legendList=new StackPane[legenda.length];
+
+        for (int i=0;i<legendList.length;i++) {
+            legendList[i]=new StackPane();
+            legendList[i].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            legendList[i].setMinSize(60,50);
+            textLabel=new Label((zile[i]));
             textLabel.setFont(new Font(10));
-            scheduleMatrix[i][0].getChildren().add(textLabel);
-            scheduleGrid.add(scheduleMatrix[i][0], i, 0);
+            legendList[i].getChildren().add(textLabel);
+            legendGrid.add(legendList[i],i,0);
         }
 
-        for (int i=0;i<4;i++) {
-            for (int j=1;j<numberOfGroups*4+1;j++) {
-                scheduleMatrix[i][j]=new StackPane();
-                scheduleMatrix[i][j].setBackground(HEADER);
+        ScrollPane legendPane=new ScrollPane();
+        legendPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        legendPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        legendPane.setContent(legendGrid);
+        windowGrid.add(legendPane,0,0);
+
+        GridPane headerGrid=new GridPane();
+        headerGrid.setAlignment(Pos.CENTER);
+        StackPane[][] headerMatrix=new StackPane[6*HOURS][2];
+
+        for (int i=0;i<DAYS/2;i++) {
+            headerMatrix[i][0]=new StackPane();
+            headerMatrix[i][0].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            headerMatrix[i][0].setPrefSize(60,25);
+            textLabel=new Label((zile[i]));
+            textLabel.setFont(new Font(10));
+            headerMatrix[i][0].getChildren().add(textLabel);
+            headerGrid.add(headerMatrix[i][0],i*7,1,7,1);
+        }
+
+        for (int i=0;i<DAYS/2*HOURS;i++) {
+            headerMatrix[i][1]=new StackPane();
+            headerMatrix[i][1].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            headerMatrix[i][1].setPrefSize(60,25);
+            textLabel=new Label(ore[i%HOURS]);
+            textLabel.setFont(new Font(10));
+            headerMatrix[i][1].getChildren().add(textLabel);
+            headerGrid.add(headerMatrix[i][1], i, 2);
+        }
+
+        ScrollPane headerScroll=new ScrollPane();
+        headerScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        headerScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        headerScroll.setContent(headerGrid);
+        windowGrid.add(headerScroll,1,0);
+
+        GridPane leftGrid=new GridPane();
+        headerGrid.setAlignment(Pos.CENTER);
+        StackPane[][] leftMatrix=new StackPane[legenda.length][numberOfGroups*4];
+
+        for (int i=0;i<legenda.length;i++) {
+            for (int j=0;j<numberOfGroups*4;j++) {
+                leftMatrix[i][j]=new StackPane();
+                leftMatrix[i][j].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
                 switch (i) {
                     case 0:
-                        if((j-1)%4==0) {
-                            scheduleMatrix[i][j].setStyle("-fx-border-color:black; -fx-backgorund-color:beige");
-                            textLabel=new Label(Integer.toString(groupsOfYear.get((j-1)/4).getYear()));
+                        if(j%4==0) {
+                            leftMatrix[i][j].setPrefSize(60,100);
+                            textLabel=new Label(Integer.toString(groupsOfYear.get(j/4).getYear()));
                             textLabel.setFont(new Font(10));
-                            scheduleMatrix[i][j].getChildren().add(textLabel);
-                            scheduleGrid.add(scheduleMatrix[i][j], i, j,1,4);
+                            leftMatrix[i][j].getChildren().add(textLabel);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
                         }
                         break;
                     case 1:
-                        if((j-1)%4==0) {
-                            scheduleMatrix[i][j].setStyle("-fx-border-color:black; -fx-backgorund-color:beige");
-                            textLabel=new Label(groupsOfYear.get((j - 1) / 4).getSpeciality());
+                        if(j%4==0) {
+                            leftMatrix[i][j].setPrefSize(60,25);
+                            textLabel=new Label(groupsOfYear.get(j/ 4).getSpeciality());
                             textLabel.setFont(new Font(10));
-                            scheduleMatrix[i][j].getChildren().add(textLabel);
-                            scheduleGrid.add(scheduleMatrix[i][j], i, j,1,4);
+                            leftMatrix[i][j].getChildren().add(textLabel);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
                         }
                         break;
                     case 2:
-                        if((j-1)%4==0) {
-                            scheduleMatrix[i][j].setStyle("-fx-border-color:black; -fx-backgorund-color:beige");
-                            textLabel=new Label(groupsOfYear.get((j - 1) / 4).getGroupName());
+                        if(j%4==0) {
+                            leftMatrix[i][j].setPrefSize(60,100);
+                            textLabel=new Label(groupsOfYear.get(j/ 4).getGroupName());
                             textLabel.setFont(new Font(10));
-                            scheduleMatrix[i][j].getChildren().add(textLabel);
-                            scheduleGrid.add(scheduleMatrix[i][j], i, j,1,4);
+                            leftMatrix[i][j].getChildren().add(textLabel);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
                         }
                         break;
                     case 3:
-                        if((j-1)%4==0&&(j-1)%2==0) {
-                            scheduleMatrix[i][j].setStyle("-fx-border-color:black; -fx-backgorund-color:beige");
+                        if(j%4==0&&j%2==0) {
+                            leftMatrix[i][j].setPrefSize(60,50);
                             textLabel=new Label("A");
                             textLabel.setFont(new Font(10));
-                            scheduleMatrix[i][j].getChildren().add(textLabel);
-                            scheduleGrid.add(scheduleMatrix[i][j], i, j,1,2);
+                            leftMatrix[i][j].getChildren().add(textLabel);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
                         }
-                        else if ((j-1)%2==0) {
-                            scheduleMatrix[i][j].setStyle("-fx-border-color:black; -fx-backgorund-color:beige");
+                        else if (j%2==0) {
+                            leftMatrix[i][j].setPrefSize(60,50);
                             textLabel=new Label("B");
                             textLabel.setFont(new Font(10));
-                            scheduleMatrix[i][j].getChildren().add(textLabel);
-                            scheduleGrid.add(scheduleMatrix[i][j], i, j,1,2);
+                            leftMatrix[i][j].getChildren().add(textLabel);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
                         }
                         break;
                     default:
-                        scheduleGrid.add(scheduleMatrix[i][j], i, j);
+                        leftGrid.add(leftMatrix[i][j], i, j);
                         break;
                 }
             }
         }
 
-        for (int i=4;i<6*HOURS+4;i++)
-            for (int j=1;j<numberOfGroups*4+1;j++){
+        ScrollPane leftScroll=new ScrollPane();
+        leftScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        leftScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        leftScroll.setContent(leftGrid);
+        windowGrid.add(leftScroll,0,1);
 
-                int day=(i-4)/HOURS;
-                Group presentGroup = groupsOfYear.get((j-1)/4);
+        GridPane scheduleGrid=new GridPane();
+        scheduleGrid.setAlignment(Pos.CENTER);
+        StackPane[][] scheduleMatrix=new StackPane[DAYS/2*HOURS][numberOfGroups*4];
+
+        for (int i=0;i<DAYS/2*HOURS;i++)
+            for (int j=0;j<numberOfGroups*4;j++){
+
+                int day=i/HOURS;
+                Group presentGroup = groupsOfYear.get(j/4);
 
                 scheduleMatrix[i][j]=new StackPane();
                 scheduleMatrix[i][j].setPrefSize(60,25);
                 scheduleMatrix[i][j].setStyle("-fx-border-color:black");
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
 
-                presentActivityId = presentGroup.getActivityGroup(semester,(i-4)%HOURS,day*2);
+                presentActivityId = presentGroup.getActivityGroup(semester,i%HOURS,day*2+1);
 
                 addDropHandlingYearSchedule(scheduleMatrix[i][j],groupsOfYear);
 
@@ -239,10 +316,10 @@ public class Scenes {
                     lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
-                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,(i-4)%HOURS, day*2)).getSubject() + " " + i + "," + j);
+                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,i%HOURS, day*2)).getSubject() + " " + i + "," + j);
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
-
+                System.out.println(i+","+j);
                 j++;
 
                 scheduleMatrix[i][j]=new StackPane();
@@ -250,7 +327,7 @@ public class Scenes {
                 scheduleMatrix[i][j].setStyle("-fx-border-color:black");
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
 
-                presentActivityId = presentGroup.getActivityGroup(semester,(i-4)%HOURS,day*2+1);
+                presentActivityId = presentGroup.getActivityGroup(semester,i%HOURS,day*2+1);
 
                 addDropHandlingYearSchedule(scheduleMatrix[i][j],groupsOfYear);
 
@@ -261,19 +338,20 @@ public class Scenes {
                     lbl=Utility.createYearLabel(presentActivity, professor, groups);
                     scheduleMatrix[i][j].getChildren().add(lbl);
                     dragTextArea(lbl);
-                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,(i-4)%HOURS, day*2+1)).getSubject() + " " + i + "," + j);
+                    System.out.println("Add label " + activities.get(professor.getActivityProfessor(semester,i%HOURS, day*2+1)).getSubject() + " " + i + "," + j);
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
+                System.out.println(i+","+j);
             }
 
-        scheduleGrid.setAlignment(Pos.CENTER);
-        ScrollPane scrollPane=new ScrollPane();
-        scrollPane.pannableProperty().set(true);
-        //setupScrolling(scrollPane);
-        scrollPane.setContent(scheduleGrid);
-        scheduleRoot.getChildren().add(scrollPane);
-        scheduleRoot.setPadding(new Insets(10,10,10,10));
-        scheduleRoot.autosize();
+        ScrollPane scheduleScroll=new ScrollPane();
+        scheduleScroll.pannableProperty().set(true);
+        scheduleScroll.setContent(scheduleGrid);
+        windowGrid.add(scheduleScroll,1,1);
+
+
+        Scene scheduleScene=new Scene(windowGrid);
+        scheduleScroll.autosize();
         StackPane.setAlignment(scheduleGrid,Pos.TOP_CENTER);
         scheduleStage.setScene(scheduleScene);
         scheduleStage.setTitle("Orar anul "+year+" semestrul "+semester);
@@ -440,7 +518,7 @@ public class Scenes {
 
     private void moveToProfSchedule(StackPane pane,int col, int row,Activity activity) {
 
-        StackPane pane2,actualPane;
+        StackPane secondPane,actualPane;
         GridPane grid;
         IndexedLabel actualLabel;
         IndexedLabel[] labels;
@@ -495,8 +573,8 @@ public class Scenes {
                         nodeX=GridPane.getRowIndex(node);
                         nodeY=GridPane.getColumnIndex(node);
                         if ( nodeX == X  && nodeY == Y ) {
-                            pane2 = (StackPane) node;
-                            pane2.getChildren().add(labels[t]);
+                            secondPane = (StackPane) node;
+                            secondPane.getChildren().add(labels[t]);
                         }
                         if ( nodeX >= X && nodeY >= Y ) {
                             break;
@@ -547,8 +625,8 @@ public class Scenes {
                         nodeX=GridPane.getRowIndex(node);
                         nodeY=GridPane.getColumnIndex(node);
                         if ( nodeX == X  && nodeY == Y ) {
-                            pane2 = (StackPane) node;
-                            pane2.getChildren().add(labels[t]);
+                            secondPane = (StackPane) node;
+                            secondPane.getChildren().add(labels[t]);
                         }
                         if ( nodeX >= X && nodeY >= Y ) {
                             break;

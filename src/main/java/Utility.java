@@ -2,8 +2,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,8 +44,6 @@ public class Utility {
 
         ArrayList<Activity> activities=new ArrayList<>();
         File file=new File(fileName);
-//        professors.clear();
-//        groups.clear();
         profIndex=0;
         groupIndex=0;
         activityIndex=0;
@@ -193,13 +197,14 @@ public class Utility {
                                     }
                                 }
                                 if (s1C + s2C == 0) {
-                                    List<Group> groupsToAddToCourse=new ArrayList<Group>();
+                                    List<Group> groupsToAddToCourse=new ArrayList<>();
                                     boolean isIn;
                                     for (Group newGroup:actualGroups[0]) {
                                         isIn=false;
                                         for(Group oldGroup:groupsToAddToCourse) {
-                                            if (oldGroup==newGroup) {
-                                                isIn=true;
+                                            if (oldGroup == newGroup) {
+                                                isIn = true;
+                                                break;
                                             }
                                         }
                                         if (!isIn) {
@@ -301,13 +306,13 @@ public class Utility {
 
     public static ArrayList<Activity> loadActivities(String file) {
 
-        ArrayList<Activity> activities=new ArrayList<>();
+        ArrayList<Activity> activities;
         Gson gson=new Gson();
         try {
             Reader actReader = Files.newBufferedReader(Paths.get(file));
             activities = gson.fromJson(actReader, new TypeToken<ArrayList<Activity>>() {}.getType());
             actReader.close();
-            Utility.message("Citire activități reușită");
+            //Utility.message("Citire activități reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire activități eșuată"+ex.toString());
@@ -318,13 +323,13 @@ public class Utility {
 
     public static ArrayList<Professor> loadProfessors(String file) {
 
-        ArrayList<Professor> professors=new ArrayList<>();
+        ArrayList<Professor> professors;
         Gson gson=new Gson();
         try {
             Reader profReader = Files.newBufferedReader(Paths.get(file));
             professors = gson.fromJson(profReader, new TypeToken<ArrayList<Professor>>() {}.getType());
             profReader.close();
-            Utility.message("Citire profesori reușită");
+            //Utility.message("Citire profesori reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire profesori eșuată");
@@ -335,13 +340,13 @@ public class Utility {
 
     public static ArrayList<Group> loadGroups(String file) {
 
-        ArrayList<Group> groups=new ArrayList<>();
+        ArrayList<Group> groups;
         Gson gson=new Gson();
         try {
             Reader grpReader = Files.newBufferedReader(Paths.get(file));
             groups = gson.fromJson(grpReader, new TypeToken<ArrayList<Group>>() {}.getType());
             grpReader.close();
-            Utility.message("Citire grupe reușită");
+            //Utility.message("Citire grupe reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire grupe eșuată");
@@ -352,13 +357,13 @@ public class Utility {
 
     public static ArrayList<Room> loadRooms(String file) {
 
-        ArrayList<Room> rooms=new ArrayList<>();
+        ArrayList<Room> rooms;
         Gson gson=new Gson();
         try {
             Reader rmReader = Files.newBufferedReader(Paths.get(file));
             rooms = gson.fromJson(rmReader, new TypeToken<ArrayList<Group>>() {}.getType());
             rmReader.close();
-            Utility.message("Citire grupe reușită");
+            //Utility.message("Citire săli reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire grupe eșuată");
@@ -367,7 +372,7 @@ public class Utility {
         return rooms;
     }
 
-    public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) throws IOException {
+    public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) {
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -406,7 +411,6 @@ public class Utility {
             FileWriter roomWriter=new FileWriter(file+".rm");
             gson.toJson(groups,roomWriter);
             roomWriter.close();
-            Utility.message("Salvare reușită");
         }
         catch (Exception ex) {
             Utility.message("Salvare săli eșuată");
@@ -415,8 +419,6 @@ public class Utility {
 
         return true;
     }
-
-
 
     public static IndexedLabel createProfLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
 
@@ -436,7 +438,7 @@ public class Utility {
         lbl.setWrapText(true);
         lbl.setStyle("-fx-border:black;");
         StringBuilder groupsNames= new StringBuilder();
-        for (int g = 0; g<currentActivity.getGroupsId().length; g++){
+        for (int g = 0; g<currentActivity.getGroupsId().length; g++) {
             groupsNames.append(groups.get(currentActivity.getGroupsId()[g]).getGroupName()).append(" ");
         }
         lbl.setText(groupsNames+"\n"+currentActivity.getCodeSubject()+","+currentActivity.getTypeChar());
@@ -467,7 +469,6 @@ public class Utility {
         lbl.setAlignment(Pos.CENTER);
         lbl.setWrapText(true);
         lbl.setStyle("-fx-border:black;");
-        StringBuilder groupsNames= new StringBuilder();
         lbl.setText(currentActivity.getCodeSubject()+","+currentActivity.getTypeChar()+"\n"+professor.getShortName());
         switch (currentActivity.getType()) {
             case 1:
@@ -486,7 +487,21 @@ public class Utility {
 
     static void message(String message){
 
-        System.out.println(message);
+        Label messageLabel=new Label(message);
+        Button okButton=new Button("Ok");
+        okButton.setPrefWidth(100);
+        VBox verticalBox=new VBox();
+        verticalBox.setSpacing(30);
+        verticalBox.setPrefSize(300,150);
+        verticalBox.setAlignment(Pos.CENTER);
+        verticalBox.getChildren().addAll(messageLabel,okButton);
+        Scene messageScene=new Scene(verticalBox);
+        Stage messageStage=new Stage();
+        messageStage.setScene(messageScene);
+        messageStage.setTitle("Mesaj aplicație");
+        messageStage.show();
+        okButton.setOnAction(event -> messageStage.close());
+
     }
 
     public static int maxYear(ArrayList<Activity> activities) {

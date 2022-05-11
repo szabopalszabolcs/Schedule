@@ -75,7 +75,10 @@ public class MainMenu {
             professors.clear();
             groups.clear();
             activities = Utility.readXls(file, professors, groups, faculty);
-            years = Utility.maxYear(activities);
+            if (activities!=null)
+                years = Utility.maxYear(activities);
+            else
+                years=0;
             if (activities!=null) {
                 profCombo.getItems().clear();
                 groupCombo.getItems().clear();
@@ -97,7 +100,7 @@ public class MainMenu {
                 if (years>0)
                     yearCombo.setValue(1);
                 semesterCombo.setValue(1);
-                scenes =new Scenes(professors,activities,groups);
+                scenes =new Scenes(professors,activities,groups,rooms);
                 Utility.message("Datele au fost citite cu succes");
             }
             else Utility.message("Citire date eșuată");
@@ -126,12 +129,8 @@ public class MainMenu {
         });
 
         saveData.setOnAction(event -> {
-            try {
-                Utility.saveData("data/savedfile", professors,groups,activities);
-            }
-            catch (Exception ex){
-                Utility.message("Salvare date eșuată");
-            }
+            if (Utility.saveData("data/savedfile", professors,groups,activities))
+                Utility.message("Salvare reușită");
         });
 
         loadData.setOnAction(event -> {
@@ -162,7 +161,7 @@ public class MainMenu {
                     if (years>0)
                         yearCombo.setValue(1);
                     semesterCombo.setValue(1);
-                    scenes =new Scenes(professors,activities,groups);
+                    scenes =new Scenes(professors,activities,groups,rooms);
                     Utility.message("Datele au fost încărcate cu succes");
                 }
                 else Utility.message("Încărcare date eșuată");
