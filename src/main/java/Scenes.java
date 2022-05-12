@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -201,7 +202,7 @@ public class Scenes {
 
         for (int i=0;i<DAYS/2;i++) {
             headerMatrix[i][0]=new StackPane();
-            headerMatrix[i][0].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            headerMatrix[i][0].setStyle("-fx-border-color:black; -fx-background-color:beige;");
             headerMatrix[i][0].setPrefSize(60,25);
             textLabel=new Label((zile[i]));
             textLabel.setFont(new Font(10));
@@ -211,7 +212,7 @@ public class Scenes {
 
         for (int i=0;i<DAYS/2*HOURS;i++) {
             headerMatrix[i][1]=new StackPane();
-            headerMatrix[i][1].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+            headerMatrix[i][1].setStyle("-fx-border-color:black; -fx-background-color:beige");
             headerMatrix[i][1].setPrefSize(60,25);
             textLabel=new Label(ore[i%HOURS]);
             textLabel.setFont(new Font(10));
@@ -230,55 +231,55 @@ public class Scenes {
         StackPane[][] leftMatrix=new StackPane[legenda.length][numberOfGroups*4];
 
         for (int i=0;i<legenda.length;i++) {
-            for (int j=0;j<numberOfGroups*4;j++) {
+            for (int j=0;j<numberOfGroups*2;j++) {
                 leftMatrix[i][j]=new StackPane();
-                leftMatrix[i][j].setStyle("-fx-border-color:black; -fx-background-color:beige; -fx-padding:5");
+                leftMatrix[i][j].setStyle("-fx-border-color:black; -fx-background-color:beige");
                 switch (i) {
                     case 0:
-                        if(j%4==0) {
+                        if(j%2==0) {
                             leftMatrix[i][j].setPrefSize(60,100);
-                            textLabel=new Label(Integer.toString(groupsOfYear.get(j/4).getYear()));
+                            textLabel=new Label(Integer.toString(groupsOfYear.get(j/2).getYear()));
                             textLabel.setFont(new Font(10));
                             leftMatrix[i][j].getChildren().add(textLabel);
-                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
                         }
                         break;
                     case 1:
-                        if(j%4==0) {
-                            leftMatrix[i][j].setPrefSize(60,25);
-                            textLabel=new Label(groupsOfYear.get(j/ 4).getSpeciality());
+                        if(j%2==0) {
+                            leftMatrix[i][j].setPrefSize(60,100);
+                            textLabel=new Label(groupsOfYear.get(j/2).getSpeciality());
                             textLabel.setFont(new Font(10));
                             leftMatrix[i][j].getChildren().add(textLabel);
-                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
                         }
                         break;
                     case 2:
-                        if(j%4==0) {
+                        if(j%2==0) {
                             leftMatrix[i][j].setPrefSize(60,100);
-                            textLabel=new Label(groupsOfYear.get(j/ 4).getGroupName());
+                            textLabel=new Label(groupsOfYear.get(j/2).getGroupName());
                             textLabel.setFont(new Font(10));
                             leftMatrix[i][j].getChildren().add(textLabel);
-                            leftGrid.add(leftMatrix[i][j], i, j,1,4);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
                         }
                         break;
                     case 3:
-                        if(j%4==0&&j%2==0) {
+                        if(j%2==0) {
                             leftMatrix[i][j].setPrefSize(60,50);
                             textLabel=new Label("A");
                             textLabel.setFont(new Font(10));
                             leftMatrix[i][j].getChildren().add(textLabel);
-                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,1);
                         }
-                        else if (j%2==0) {
+                        else {
                             leftMatrix[i][j].setPrefSize(60,50);
                             textLabel=new Label("B");
                             textLabel.setFont(new Font(10));
                             leftMatrix[i][j].getChildren().add(textLabel);
-                            leftGrid.add(leftMatrix[i][j], i, j,1,2);
+                            leftGrid.add(leftMatrix[i][j], i, j,1,1);
                         }
                         break;
                     default:
-                        leftGrid.add(leftMatrix[i][j], i, j);
+                        //leftGrid.add(leftMatrix[i][j], i, j);
                         break;
                 }
             }
@@ -294,6 +295,8 @@ public class Scenes {
         scheduleGrid.setAlignment(Pos.CENTER);
         StackPane[][] scheduleMatrix=new StackPane[DAYS/2*HOURS][numberOfGroups*4];
 
+        int presentProfId;
+
         for (int i=0;i<DAYS/2*HOURS;i++)
             for (int j=0;j<numberOfGroups*4;j++){
 
@@ -305,7 +308,7 @@ public class Scenes {
                 scheduleMatrix[i][j].setStyle("-fx-border-color:black");
                 scheduleMatrix[i][j].setAlignment(Pos.TOP_CENTER);
 
-                presentActivityId = presentGroup.getActivityGroup(semester,i%HOURS,day*2+1);
+                presentActivityId = presentGroup.getActivityGroup(semester,i%HOURS,day*2);
 
                 addDropHandlingYearSchedule(scheduleMatrix[i][j],groupsOfYear);
 
@@ -320,6 +323,7 @@ public class Scenes {
                 }
                 scheduleGrid.add(scheduleMatrix[i][j], i, j);
                 System.out.println(i+","+j);
+
                 j++;
 
                 scheduleMatrix[i][j]=new StackPane();
@@ -346,13 +350,16 @@ public class Scenes {
 
         ScrollPane scheduleScroll=new ScrollPane();
         scheduleScroll.pannableProperty().set(true);
+        scheduleScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scheduleScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scheduleScroll.setContent(scheduleGrid);
         windowGrid.add(scheduleScroll,1,1);
 
+        headerScroll.hvalueProperty().bindBidirectional(scheduleScroll.hvalueProperty());
+        leftScroll.vvalueProperty().bindBidirectional(scheduleScroll.vvalueProperty());
 
         Scene scheduleScene=new Scene(windowGrid);
         scheduleScroll.autosize();
-        StackPane.setAlignment(scheduleGrid,Pos.TOP_CENTER);
         scheduleStage.setScene(scheduleScene);
         scheduleStage.setTitle("Orar anul "+year+" semestrul "+semester);
         scheduleStage.show();
@@ -674,7 +681,7 @@ public class Scenes {
         int semester = activity.getSemester();
         Professor professor = professors.get(activity.getProfessorId());
         boolean rowOk=false;
-        int groupOfThisRow=groupsOfThisGrid.get((row-1)/4).getIdGroup();
+        int groupOfThisRow=groupsOfThisGrid.get(row/4).getIdGroup();
         for (int g:activity.getGroupsId()) {
             if (g==groupOfThisRow) {
                 rowOk=true;
@@ -684,44 +691,44 @@ public class Scenes {
         if (!rowOk) {
             return null;
         }
-        if (col + (time - 1) / 2 > 6 * HOURS + 4 ) {
+        if (col + (time - 1) / 2 > 6 * HOURS) {
             return null;
         }
-        if ((col-4)/HOURS!=(col+(time-1)/2-4)/HOURS) {
+        if (col/HOURS>(col+(time-1)/2)/HOURS) {
             return null;
         }
         int add;
         int X,Y;
         switch (time%2) {
             case 1:
-                if (row % 2 == 0)
+                if (row % 2 == 1)
                     add=-1;
                 else
                     add=1;
                 for (int t=0;t<time;t++) {
                     X=row+(t%2)*add;
                     Y=col+(t+1)/2;
-                    if (professor.getActivityProfessor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
+                    if (professor.getActivityProfessor(semester,Y%HOURS, Y/ HOURS *2+X-row) != -1) {
                         return null;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row) != -1) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, Y% HOURS, Y/ HOURS * 2 + X - row) != -1) {
                             return null;
                         }
                     }
                 }
                 break;
             case 0:
-                if (row % 2 == 0)
+                if (row % 2 == 1)
                     row--;
                 for (int t=0;t<time;t++) {
                     X=row+t%2;
                     Y=col+t/2;
-                    if (professor.getActivityProfessor(semester,(Y-4)%HOURS, (Y - 4) / HOURS *2+X-row) != -1) {
+                    if (professor.getActivityProfessor(semester,Y%HOURS, Y/HOURS *2+X-row) != -1) {
                         return null;
                     }
                     for (int j = 0; j<activity.getGroupsId().length; j++) {
-                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, (Y - 4) & HOURS, (Y - 4) / HOURS * 2 + X - row) != -1) {
+                        if (groups.get(activity.getGroupsId()[j]).getActivityGroup(semester, Y % HOURS, Y / HOURS * 2 + X - row) != -1) {
                             return null;
                         }
                     }
@@ -732,7 +739,7 @@ public class Scenes {
         }
 
         int semigroup;
-        if ((row-1)%4<2)
+        if (row%4<2)
             semigroup=2;
         else
             semigroup=-2;
@@ -822,9 +829,9 @@ public class Scenes {
                         if (add==-1)
                             pair=1;
                         else pair=0;
-                        professor.setActivityProfessor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row+pair, activity.getIdActivity());
+                        professor.setActivityProfessor(semester, Y % HOURS, Y / HOURS * 2 + X - row+pair, activity.getIdActivity());
                         for (int j = 0; j < activity.getGroupsId().length; j++)
-                            groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row+pair, activity.getIdActivity());
+                            groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, Y % HOURS, Y / HOURS * 2 + X - row+pair, activity.getIdActivity());
                     }
                 }
                 break;
@@ -862,7 +869,7 @@ public class Scenes {
 
                 for (int i=0; i<rows.size();i++) {
                     int row=rows.get(i);
-                    if (row % 2 == 0)
+                    if (row % 2 == 1)
                         row--;
                     for (int t = 0; t < time; t++) {
                         X = row + t % 2;
@@ -880,9 +887,9 @@ public class Scenes {
                                 break;
                             }
                         }
-                        professor.setActivityProfessor(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row, activity.getIdActivity());
+                        professor.setActivityProfessor(semester, Y % HOURS, Y / HOURS * 2 + X - row, activity.getIdActivity());
                         for (int j = 0; j < activity.getGroupsId().length; j++)
-                            groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, (Y - 4) % HOURS, (Y - 4) / HOURS * 2 + X - row, activity.getIdActivity());
+                            groups.get(activity.getGroupsId()[j]).setActivityGroup(semester, Y % HOURS, Y / HOURS * 2 + X - row, activity.getIdActivity());
                     }
                 }
                 break;
