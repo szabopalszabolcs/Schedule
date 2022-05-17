@@ -1,3 +1,4 @@
+import com.sun.tools.javac.util.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -6,7 +7,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.controlsfx.control.SearchableComboBox;
+
 import java.util.ArrayList;
+
+import static org.controlsfx.control.textfield.TextFields.bindAutoCompletion;
 
 public class MainMenu {
 
@@ -18,9 +23,6 @@ public class MainMenu {
     Scenes scenes;
 
     public void createMainMenu() {
-
-        String file = "data/MIN 2019 sept 30.xls";
-        String faculty = "MI";
 
         Stage mainStage=new Stage();
 
@@ -40,13 +42,13 @@ public class MainMenu {
         semesterCombo.getItems().add(2);
         semesterCombo.setPrefSize(300,30);
 
-        ComboBox<String> profCombo=new ComboBox<>();
+        SearchableComboBox<String> profCombo=new SearchableComboBox<>();
         profCombo.setPrefSize(300,30);
 
         Button chooseProfesor=new Button("Alege profesorul");
         chooseProfesor.setPrefSize(300,30);
 
-        ComboBox<String> groupCombo=new ComboBox<>();
+        SearchableComboBox<String> groupCombo=new SearchableComboBox<>();
         groupCombo.setPrefSize(300,30);
 
         Button chooseGroup=new Button("Alege grupa");
@@ -72,27 +74,38 @@ public class MainMenu {
         semestru.setPrefSize(300,30);
 
         readFile.setOnAction(event -> {
+
             professors.clear();
             groups.clear();
-            activities = Utility.readXls(file, professors, groups, faculty);
-            if (activities!=null)
+            profCombo.getItems().clear();
+            groupCombo.getItems().clear();
+            yearCombo.getItems().clear();
+
+            Pair<String,String> dataPair=Utility.readFile();
+            if (dataPair!=null) {
+                String file=dataPair.fst;
+                String faculty=dataPair.snd;
+                activities = Utility.readXls(file, professors, groups, faculty);
+            }
+            else {
+                Utility.message("Format fișier necorespunzător");
+                return;
+            }
+
+            if (activities.size()>0)
                 years = Utility.maxYear(activities);
             else
                 years=0;
-            if (activities!=null) {
-                profCombo.getItems().clear();
-                groupCombo.getItems().clear();
-                yearCombo.getItems().clear();
-
+            if (activities.size()>0) {
                 for (Professor professor : professors) {
                     profCombo.getItems().add(professor.getName());
                 }
-                if (professors.get(0)!=null)
+                if (professors.size()>0)
                     profCombo.setValue(professors.get(0).getName());
                 for (Group group:groups){
                     groupCombo.getItems().add(group.getGroupName());
                 }
-                if (groups.get(0)!=null)
+                if (groups.size()>0)
                     groupCombo.setValue(groups.get(0).getGroupName());
                 for (int i=0;i<years;i++) {
                     yearCombo.getItems().add(i+1);
@@ -128,43 +141,64 @@ public class MainMenu {
             }
         });
 
+        chooseGroup.setOnAction(event -> {
+            try{
+                int indexSelected=groupCombo.getSelectionModel().getSelectedIndex();
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                scenes.groupsScheduleScene(indexSelected,semester);
+            }
+            catch (Exception ex){
+                Utility.message("Generare orar eșuată");
+            }
+        });
+
         saveData.setOnAction(event -> {
-            if (Utility.saveData("data/savedfile", professors,groups,activities))
+
+            String fileName=Utility.saveFile();
+            if (Utility.saveData(fileName, professors,groups,activities,rooms))
                 Utility.message("Salvare reușită");
         });
 
         loadData.setOnAction(event -> {
-                String fileName="data/savedfile";
-                activities=Utility.loadActivities(fileName+".act");
-                professors=Utility.loadProfessors(fileName+".prf");
-                groups=Utility.loadGroups(fileName+".grp");
-                rooms=Utility.loadRooms(fileName+".rm");
-                years = Utility.maxYear(activities);
-                if (activities!=null) {
-                    profCombo.getItems().clear();
-                    groupCombo.getItems().clear();
-                    yearCombo.getItems().clear();
 
-                    for (Professor professor : professors) {
-                        profCombo.getItems().add(professor.getName());
-                    }
-                    if (professors.get(0)!=null)
-                        profCombo.setValue(professors.get(0).getName());
-                    for (Group group:groups){
-                        groupCombo.getItems().add(group.getGroupName());
-                    }
-                    if (groups.get(0)!=null)
-                        groupCombo.setValue(groups.get(0).getGroupName());
-                    for (int i=0;i<years;i++) {
-                        yearCombo.getItems().add(i+1);
-                    }
-                    if (years>0)
-                        yearCombo.setValue(1);
-                    semesterCombo.setValue(1);
-                    scenes =new Scenes(professors,activities,groups,rooms);
-                    Utility.message("Datele au fost încărcate cu succes");
+            String fileName = Utility.openFile();
+            if (fileName==null) {
+                return;
+            }
+            activities=Utility.loadActivities(fileName+"act");
+            if (activities==null) return;
+            professors=Utility.loadProfessors(fileName+"prf");
+            if (professors==null) return;
+            groups=Utility.loadGroups(fileName+"grp");
+            if (groups==null) return;
+            rooms=Utility.loadRooms(fileName+"rms");
+            if (rooms==null) return;
+            years = Utility.maxYear(activities);
+            if (activities!=null) {
+                profCombo.getItems().clear();
+                groupCombo.getItems().clear();
+                yearCombo.getItems().clear();
+
+                for (Professor professor : professors) {
+                    profCombo.getItems().add(professor.getName());
                 }
-                else Utility.message("Încărcare date eșuată");
+                if (professors.get(0)!=null)
+                    profCombo.setValue(professors.get(0).getName());
+                for (Group group:groups){
+                    groupCombo.getItems().add(group.getGroupName());
+                }
+                if (groups.get(0)!=null)
+                    groupCombo.setValue(groups.get(0).getGroupName());
+                for (int i=0;i<years;i++) {
+                    yearCombo.getItems().add(i+1);
+                }
+                if (years>0)
+                    yearCombo.setValue(1);
+                semesterCombo.setValue(1);
+                scenes =new Scenes(professors,activities,groups,rooms);
+                Utility.message("Datele au fost încărcate cu succes");
+            }
+            else Utility.message("Încărcare date eșuată");
         });
 
         exit.setOnAction(event -> {

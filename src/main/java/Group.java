@@ -47,6 +47,10 @@ public class Group {
         this.idGroup=id;
     }
 
+    public int[] getActivitiesOfGroup() {
+        return activitiesOfGroup;
+    }
+
     public int getActivityGroup(int semester,int hour,int day){
         try {
             return scheduleGroup[semester-1][hour][day];

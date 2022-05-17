@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.sun.tools.javac.util.Pair;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,6 +24,7 @@ import java.util.List;
 class NoSheetException extends Exception{
     NoSheetException(String ex){
         super(ex);
+        Utility.message("Format fișier stat de funcții necorespunzător");
     }
 }
 
@@ -38,6 +41,50 @@ public class Utility {
         if (b>c) c=b;
         if (c>d) d=c;
         return d;
+    }
+
+    public static Pair<String,String> readFile() {
+
+        Stage chooserStage=new Stage();
+        chooserStage.setTitle("Deschidere fișier stat de funcțiuni");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Excel files", "*.xls"));
+        File selectedFile = fileChooser.showOpenDialog(chooserStage);
+        if (selectedFile == null) {
+            chooserStage.close();
+            return null;
+        }
+
+        String faculty;
+        String fileName=selectedFile.getAbsolutePath();
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(fileName);
+            HSSFWorkbook hssfWorkbook = new HSSFWorkbook(fileInputStream);
+            int numberOfSheets = hssfWorkbook.getNumberOfSheets();
+            int sheetToRead = -1;
+            for (int i = 0; i < numberOfSheets; i++) {
+                if (hssfWorkbook.getSheetName(i).equals("DateC")) {
+                    sheetToRead = i;
+                    i = numberOfSheets;
+                }
+            }
+            if (sheetToRead == -1) {
+                throw new NoSheetException("Sheet inexistent");
+            }
+            HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheetToRead);
+            Row row=hssfSheet.getRow(2);
+            faculty=row.getCell(12).toString();
+            if (faculty.length()<1) {
+                return null;
+            }
+        }
+        catch (Exception ex) {
+            return null;
+        }
+        return new Pair<String,String>(fileName,faculty);
     }
 
     public static ArrayList<Activity> readXls(String fileName, ArrayList<Professor> professors, ArrayList<Group> groups, String faculty){
@@ -304,6 +351,36 @@ public class Utility {
 
     }
 
+    public static String openFile() {
+
+        Stage stage=new Stage();
+        stage.setTitle("Deschidere fișier date");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Data files","*.act", "*.grp", "*.prf", "*.rms"));
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile == null) {
+            stage.close();
+            return null;
+        }
+
+        String fileName=selectedFile.getAbsolutePath();
+        String[] fileNamePieces =fileName.split("\\.");
+        fileName="";
+        if (fileNamePieces.length>1) {
+            for (int i = 0; i < fileNamePieces.length - 1; i++) {
+                fileName += fileNamePieces[i] + ".";
+            }
+        }
+        else {
+            fileName=fileNamePieces[0];
+        }
+
+        return fileName;
+
+    }
+
     public static ArrayList<Activity> loadActivities(String file) {
 
         ArrayList<Activity> activities;
@@ -312,10 +389,9 @@ public class Utility {
             Reader actReader = Files.newBufferedReader(Paths.get(file));
             activities = gson.fromJson(actReader, new TypeToken<ArrayList<Activity>>() {}.getType());
             actReader.close();
-            //Utility.message("Citire activități reușită");
         }
         catch (Exception ex) {
-            Utility.message("Citire activități eșuată"+ex.toString());
+            Utility.message("Citire activități eșuată");
             return null;
         }
         return activities;
@@ -329,7 +405,6 @@ public class Utility {
             Reader profReader = Files.newBufferedReader(Paths.get(file));
             professors = gson.fromJson(profReader, new TypeToken<ArrayList<Professor>>() {}.getType());
             profReader.close();
-            //Utility.message("Citire profesori reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire profesori eșuată");
@@ -346,7 +421,6 @@ public class Utility {
             Reader grpReader = Files.newBufferedReader(Paths.get(file));
             groups = gson.fromJson(grpReader, new TypeToken<ArrayList<Group>>() {}.getType());
             grpReader.close();
-            //Utility.message("Citire grupe reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire grupe eșuată");
@@ -363,7 +437,6 @@ public class Utility {
             Reader rmReader = Files.newBufferedReader(Paths.get(file));
             rooms = gson.fromJson(rmReader, new TypeToken<ArrayList<Group>>() {}.getType());
             rmReader.close();
-            //Utility.message("Citire săli reușită");
         }
         catch (Exception ex) {
             Utility.message("Citire grupe eșuată");
@@ -372,7 +445,33 @@ public class Utility {
         return rooms;
     }
 
-    public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities) {
+    public static String saveFile() {
+
+        Stage stage=new Stage();
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showSaveDialog(stage);
+        if (selectedFile == null) {
+            stage.close();
+            return null;
+        }
+
+        String fileName=selectedFile.getAbsolutePath();
+        String[] fileNamePieces =fileName.split("\\.");
+        fileName="";
+        if (fileNamePieces.length>1) {
+            for (int i = 0; i < fileNamePieces.length - 1; i++) {
+                fileName += fileNamePieces[i] + ".";
+            }
+        }
+        else {
+            fileName=fileNamePieces[0];
+        }
+
+        return fileName;
+
+    }
+
+    public static boolean saveData(String file, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Activity> activities, ArrayList<Room> rooms) {
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -408,8 +507,8 @@ public class Utility {
         }
 
         try {
-            FileWriter roomWriter=new FileWriter(file+".rm");
-            gson.toJson(groups,roomWriter);
+            FileWriter roomWriter=new FileWriter(file+".rms");
+            gson.toJson(rooms,roomWriter);
             roomWriter.close();
         }
         catch (Exception ex) {
@@ -420,7 +519,40 @@ public class Utility {
         return true;
     }
 
-    public static IndexedLabel createProfLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+    public static IndexedLabel createGroupLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups,ArrayList<Room> rooms) {
+
+        int[] groupId=new int[groups.size()];
+
+        for (int i=0;i<groups.size();i++) {
+            groupId[i]=groups.get(i).getIdGroup();
+        }
+
+        IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfessor(),groupId);
+
+        int time=currentActivity.getTime();
+        lbl.setPrefSize(80,40*time);
+        lbl.setFont(Font.font(8));
+        lbl.setTextAlignment(TextAlignment.CENTER);
+        lbl.setAlignment(Pos.CENTER);
+        lbl.setWrapText(true);
+        lbl.setStyle("-fx-border:black;");
+        lbl.setText(professor.getShortName()+"\n"+currentActivity.getCodeSubject()+","+currentActivity.getTypeChar());
+        switch (currentActivity.getType()) {
+            case 1:
+                lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
+            case 2:
+                lbl.setStyle("-fx-background-color:LIGHTBLUE;"); break;
+            case 3:
+                lbl.setStyle("-fx-background-color:LIGHTGREEN;"); break;
+            case 4:
+                lbl.setStyle("-fx-background-color:LIGHTORANGE;"); break;
+            default:
+                lbl.setStyle("-fx-background-color:BLACK;");
+        }
+        return lbl;
+    }
+
+    public static IndexedLabel createProfLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups,ArrayList<Room> rooms) {
 
         int[] groupId=new int[groups.size()];
 
@@ -457,8 +589,9 @@ public class Utility {
         return lbl;
     }
 
-    public static IndexedLabel createYearLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups) {
+    public static IndexedLabel createYearLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups,ArrayList<Room> rooms) {
         int[] groupId=new int[groups.size()];
+        String classRoom;
         for (int i=0;i<groups.size();i++) {
             groupId[i]=groups.get(i).getIdGroup();
         }
@@ -469,7 +602,13 @@ public class Utility {
         lbl.setAlignment(Pos.CENTER);
         lbl.setWrapText(true);
         lbl.setStyle("-fx-border:black;");
-        lbl.setText(currentActivity.getCodeSubject()+","+currentActivity.getTypeChar()+"\n"+professor.getShortName());
+        if (currentActivity.getClassRoomId()>=0) {
+            classRoom=rooms.get(currentActivity.getClassRoomId()).getRoomName();
+        }
+        else {
+            classRoom="";
+        }
+        lbl.setText(currentActivity.getCodeSubject()+","+currentActivity.getTypeChar()+","+classRoom+",\n"+professor.getShortName());
         switch (currentActivity.getType()) {
             case 1:
                 lbl.setStyle("-fx-background-color:LIGHTSALMON;"); break;
@@ -488,6 +627,7 @@ public class Utility {
     static void message(String message){
 
         Label messageLabel=new Label(message);
+        messageLabel.setTextAlignment(TextAlignment.CENTER);
         Button okButton=new Button("Ok");
         okButton.setPrefWidth(100);
         VBox verticalBox=new VBox();
@@ -513,4 +653,5 @@ public class Utility {
         }
         return max;
     }
+
 }
