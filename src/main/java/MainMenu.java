@@ -1,4 +1,3 @@
-import com.sun.tools.javac.util.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -7,11 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.controlsfx.control.SearchableComboBox;
-
 import java.util.ArrayList;
-
-import static org.controlsfx.control.textfield.TextFields.bindAutoCompletion;
 
 public class MainMenu {
 
@@ -73,30 +70,46 @@ public class MainMenu {
         Button semestru=new Button("Semestru");
         semestru.setPrefSize(300,30);
 
+        Button addRoom=new Button("Adăugare sală");
+        addRoom.setPrefSize(300,30);
+
+        Button nameGroups=new Button("Redenumire grupe");
+        nameGroups.setPrefSize(300,20);
+
+        Button writeFile=new Button("Exportă orarul");
+        writeFile.setPrefSize(300,20);
+
+        mainScene.setOnKeyTyped(event -> {
+            if (event.getCharacter().equals("m")) {
+                mainStage.toFront();
+            }
+        });
+
         readFile.setOnAction(event -> {
 
             professors.clear();
             groups.clear();
-            profCombo.getItems().clear();
-            groupCombo.getItems().clear();
-            yearCombo.getItems().clear();
+            rooms.clear();
+            if (!profCombo.getItems().isEmpty()) profCombo.getItems().clear();
+            if (!groupCombo.getItems().isEmpty()) groupCombo.getItems().clear();
+            if (!yearCombo.getItems().isEmpty()) yearCombo.getItems().clear();
 
             Pair<String,String> dataPair=Utility.readFile();
             if (dataPair!=null) {
-                String file=dataPair.fst;
-                String faculty=dataPair.snd;
-                activities = Utility.readXls(file, professors, groups, faculty);
+                String file=dataPair.getKey();
+                String faculty=dataPair.getValue();
+                activities = Utility.readXls(file, professors, groups, rooms, faculty);
             }
             else {
                 Utility.message("Format fișier necorespunzător");
                 return;
             }
 
-            if (activities.size()>0)
+            if (activities!=null&&activities.size()>0)
                 years = Utility.maxYear(activities);
             else
                 years=0;
-            if (activities.size()>0) {
+            if (activities!=null&&activities.size()>0) {
                 for (Professor professor : professors) {
                     profCombo.getItems().add(professor.getName());
                 }
@@ -119,44 +132,8 @@ public class MainMenu {
             else Utility.message("Citire date eșuată");
         });
 
-        chooseProfesor.setOnAction(event -> {
-            try{
-                int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
-                int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                scenes.professorsScheduleScene(indexSelected,semester);
-            }
-            catch (Exception ex){
-                Utility.message("Generare orar eșuată");
-            }
-        });
+        writeFile.setOnAction(event -> {
 
-        chooseYear.setOnAction(event -> {
-            try{
-                int yearSelected=yearCombo.getSelectionModel().getSelectedItem();
-                int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                scenes.yearScheduleScene(yearSelected,semester);
-            }
-            catch (Exception ex){
-                Utility.message("Generare orar eșuată");
-            }
-        });
-
-        chooseGroup.setOnAction(event -> {
-            try{
-                int indexSelected=groupCombo.getSelectionModel().getSelectedIndex();
-                int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                scenes.groupsScheduleScene(indexSelected,semester);
-            }
-            catch (Exception ex){
-                Utility.message("Generare orar eșuată");
-            }
-        });
-
-        saveData.setOnAction(event -> {
-
-            String fileName=Utility.saveFile();
-            if (Utility.saveData(fileName, professors,groups,activities,rooms))
-                Utility.message("Salvare reușită");
         });
 
         loadData.setOnAction(event -> {
@@ -201,23 +178,74 @@ public class MainMenu {
             else Utility.message("Încărcare date eșuată");
         });
 
+        saveData.setOnAction(event -> {
+
+            String fileName=Utility.saveFile();
+            if (Utility.saveData(fileName, professors,groups,activities,rooms))
+                Utility.message("Salvare reușită");
+        });
+
+        addRoom.setOnAction(event -> Scenes.addRoom(rooms,activities));
+
+        chooseProfesor.setOnAction(event -> {
+            try{
+                int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                if (scenes.searchForStage(professors.get(indexSelected).getName())==null) {
+                    scenes.professorsScheduleScene(indexSelected, semester);
+                }
+            }
+            catch (Exception ex){
+                Utility.message("Generare orar eșuată");
+            }
+        });
+
+        chooseYear.setOnAction(event -> {
+            try{
+                int yearSelected=yearCombo.getSelectionModel().getSelectedItem();
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                if (scenes.searchForStage("Orar anul "+yearSelected)==null) {
+                    scenes.yearScheduleScene(yearSelected, semester);
+                }
+            }
+            catch (Exception ex){
+                Utility.message("Generare orar eșuată");
+            }
+        });
+
+        chooseGroup.setOnAction(event -> {
+            try{
+                int indexSelected=groupCombo.getSelectionModel().getSelectedIndex();
+                int semester=semesterCombo.getSelectionModel().getSelectedItem();
+                if (scenes.searchForStage(groups.get(indexSelected).getGroupName())==null) {
+                    scenes.groupsScheduleScene(indexSelected, semester);
+                }
+            }
+            catch (Exception ex){
+                Utility.message("Generare orar eșuată");
+            }
+        });
+
         exit.setOnAction(event -> {
             Platform.exit();
             System.exit(0);
         });
 
         mainGrid.add(readFile,1,1);
-        mainGrid.add(saveData,2,2);
+        mainGrid.add(writeFile,2,1);
         mainGrid.add(loadData,1,2);
-        mainGrid.add(semesterCombo,1,3);
-        mainGrid.add(semestru,2,3);
-        mainGrid.add(profCombo,1,4);
-        mainGrid.add(chooseProfesor,2,4);
-        mainGrid.add(yearCombo,1,5);
-        mainGrid.add(chooseYear,2,5);
-        mainGrid.add(groupCombo,1,6);
-        mainGrid.add(chooseGroup,2,6);
-        mainGrid.add(exit,2,7);
+        mainGrid.add(saveData,2,2);
+        mainGrid.add(addRoom,1,3);
+        mainGrid.add(nameGroups,2,3);
+        mainGrid.add(semesterCombo,1,4);
+        mainGrid.add(semestru,2,4);
+        mainGrid.add(profCombo,1,5);
+        mainGrid.add(chooseProfesor,2,5);
+        mainGrid.add(yearCombo,1,6);
+        mainGrid.add(chooseYear,2,6);
+        mainGrid.add(groupCombo,1,7);
+        mainGrid.add(chooseGroup,2,7);
+        mainGrid.add(exit,2,8);
 
         mainStage.setScene(mainScene);
         mainStage.setOnCloseRequest(Event::consume);

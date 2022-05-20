@@ -1,17 +1,19 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.sun.tools.javac.util.Pair;
+
+import com.sun.javafx.stage.StageHelper;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -84,10 +86,10 @@ public class Utility {
         catch (Exception ex) {
             return null;
         }
-        return new Pair<String,String>(fileName,faculty);
+        return new Pair<>(fileName,faculty);
     }
 
-    public static ArrayList<Activity> readXls(String fileName, ArrayList<Professor> professors, ArrayList<Group> groups, String faculty){
+    public static ArrayList<Activity> readXls(String fileName, ArrayList<Professor> professors, ArrayList<Group> groups, ArrayList<Room> rooms, String faculty){
 
         ArrayList<Activity> activities=new ArrayList<>();
         File file=new File(fileName);
@@ -122,8 +124,6 @@ public class Utility {
                         String subject = firstRow.getCell(1).toString().trim();
                         String departament = firstRow.getCell(4).toString().trim();
                         String[] speciality = firstRow.getCell(5).toString().split("\\+");
-                        for (String spec : speciality)
-                            System.out.println(spec);
                         int year = (int) firstRow.getCell(6).getNumericCellValue();
                         String[] codeFormation = secondRow.getCell(1).toString().split(",");
                         String codeSubject = codeFormation[0];
@@ -275,7 +275,6 @@ public class Utility {
             }
         }
         catch (Exception ex){
-            System.out.println(ex.toString());
             return null;
         }
         return activities;
@@ -346,9 +345,7 @@ public class Utility {
             for (int group : newActivity.getGroupsId()) {
                 groups.get(group).addActivity(activities.indexOf(newActivity));
             }
-            System.out.println(newActivity);
         }
-
     }
 
     public static String openFile() {
@@ -370,7 +367,7 @@ public class Utility {
         fileName="";
         if (fileNamePieces.length>1) {
             for (int i = 0; i < fileNamePieces.length - 1; i++) {
-                fileName += fileNamePieces[i] + ".";
+                fileName = fileName + fileNamePieces[i] + ".";
             }
         }
         else {
@@ -435,11 +432,11 @@ public class Utility {
         Gson gson=new Gson();
         try {
             Reader rmReader = Files.newBufferedReader(Paths.get(file));
-            rooms = gson.fromJson(rmReader, new TypeToken<ArrayList<Group>>() {}.getType());
+            rooms = gson.fromJson(rmReader, new TypeToken<ArrayList<Room>>() {}.getType());
             rmReader.close();
         }
         catch (Exception ex) {
-            Utility.message("Citire grupe eșuată");
+            Utility.message("Citire săli eșuată");
             return null;
         }
         return rooms;
@@ -460,7 +457,7 @@ public class Utility {
         fileName="";
         if (fileNamePieces.length>1) {
             for (int i = 0; i < fileNamePieces.length - 1; i++) {
-                fileName += fileNamePieces[i] + ".";
+                fileName = fileName + fileNamePieces[i];
             }
         }
         else {
