@@ -5,6 +5,7 @@ public class IndexedLabel extends Label {
     private int activityId;
     private int professorId;
     private int[] groupsId;
+    private int room;
 
     public IndexedLabel() { }
 
@@ -12,6 +13,7 @@ public class IndexedLabel extends Label {
         this.activityId = activityId;
         this.professorId = professorId;
         this.groupsId = groupsId;
+        this.room = -1;
     }
 
     public void setActivityId(int activityId) {
@@ -36,6 +38,14 @@ public class IndexedLabel extends Label {
 
     public int[] getGroupsId() {
         return groupsId;
+    }
+
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
     }
 
 }

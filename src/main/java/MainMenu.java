@@ -3,11 +3,13 @@ import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.controlsfx.control.SearchableComboBox;
+
 import java.util.ArrayList;
 
 public class MainMenu {
@@ -133,7 +135,8 @@ public class MainMenu {
         });
 
         writeFile.setOnAction(event -> {
-
+            String fileName = Utility.saveFile();
+            Utility.writeXls(fileName, professors, groups, activities, rooms, semesterCombo.getValue());
         });
 
         loadData.setOnAction(event -> {
@@ -174,28 +177,36 @@ public class MainMenu {
                 semesterCombo.setValue(1);
                 scenes =new Scenes(professors,activities,groups,rooms);
                 Utility.message("Datele au fost încărcate cu succes");
-            }
-            else Utility.message("Încărcare date eșuată");
+            } else Utility.message("Încărcare date eșuată");
         });
 
         saveData.setOnAction(event -> {
 
-            String fileName=Utility.saveFile();
-            if (Utility.saveData(fileName, professors,groups,activities,rooms))
+            String fileName = Utility.saveFile();
+            if (Utility.saveData(fileName, professors, groups, activities, rooms))
                 Utility.message("Salvare reușită");
         });
 
-        addRoom.setOnAction(event -> Scenes.addRoom(rooms,activities));
+        addRoom.setOnAction(event -> {
+            if (scenes != null) {
+                scenes.addRoom();
+            }
+        });
+
+        nameGroups.setOnAction(event -> {
+            if (scenes != null) {
+                scenes.renameGroup();
+            }
+        });
 
         chooseProfesor.setOnAction(event -> {
-            try{
-                int indexSelected=profCombo.getSelectionModel().getSelectedIndex();
-                int semester=semesterCombo.getSelectionModel().getSelectedItem();
-                if (scenes.searchForStage(professors.get(indexSelected).getName())==null) {
+            try {
+                int indexSelected = profCombo.getSelectionModel().getSelectedIndex();
+                int semester = semesterCombo.getSelectionModel().getSelectedItem();
+                if (scenes.searchForStage(professors.get(indexSelected).getName()) == null) {
                     scenes.professorsScheduleScene(indexSelected, semester);
                 }
-            }
-            catch (Exception ex){
+            } catch (Exception ex) {
                 Utility.message("Generare orar eșuată");
             }
         });

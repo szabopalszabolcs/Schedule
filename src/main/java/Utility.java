@@ -1,8 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import com.sun.javafx.stage.StageHelper;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,12 +9,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
-
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -36,16 +36,17 @@ public class Utility {
         throw new UnsupportedOperationException();
     }
 
-    static int profIndex=0,groupIndex=0,activityIndex=0;
+    static final int HOURS = 7, DAYS = 12;
+    static int profIndex = 0, groupIndex = 0, activityIndex = 0;
 
-    static int max(int a,int b,int c,int d){
-        if (a>b) b=a;
-        if (b>c) c=b;
-        if (c>d) d=c;
+    static int max(int a, int b, int c, int d) {
+        if (a > b) b = a;
+        if (b > c) c = b;
+        if (c > d) d = c;
         return d;
     }
 
-    public static Pair<String,String> readFile() {
+    public static Pair<String, String> readFile() {
 
         Stage chooserStage=new Stage();
         chooserStage.setTitle("Deschidere fișier stat de funcțiuni");
@@ -477,8 +478,7 @@ public class Utility {
             FileWriter actWriter=new FileWriter(file+".act");
             gson.toJson(activities,actWriter);
             actWriter.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Utility.message("Salvare activități eșuată");
             return false;
         }
@@ -487,8 +487,7 @@ public class Utility {
             FileWriter profWriter=new FileWriter(file+".prf");
             gson.toJson(professors,profWriter);
             profWriter.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Utility.message("Salvare profesori eșuată");
             return false;
         }
@@ -497,18 +496,16 @@ public class Utility {
             FileWriter groupWriter=new FileWriter(file+".grp");
             gson.toJson(groups,groupWriter);
             groupWriter.close();
-            }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Utility.message("Salvare grupe eșuată");
             return false;
         }
 
         try {
-            FileWriter roomWriter=new FileWriter(file+".rms");
-            gson.toJson(rooms,roomWriter);
+            FileWriter roomWriter = new FileWriter(file + ".rms");
+            gson.toJson(rooms, roomWriter);
             roomWriter.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Utility.message("Salvare săli eșuată");
             return false;
         }
@@ -516,12 +513,142 @@ public class Utility {
         return true;
     }
 
-    public static IndexedLabel createGroupLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups,ArrayList<Room> rooms) {
+    public static boolean writeXls(String file, ArrayList<Professor> professors, ArrayList<Group> groups,
+                                   ArrayList<Activity> activities, ArrayList<Room> rooms, int semester) {
 
-        int[] groupId=new int[groups.size()];
+        file = file + ".xls";
 
-        for (int i=0;i<groups.size();i++) {
-            groupId[i]=groups.get(i).getIdGroup();
+        int numberOfYears = Utility.maxYear(activities);
+        ArrayList<Integer> listToAdd = new ArrayList<>();
+        //ArrayList<Integer[]> groupsOfYear=new ArrayList<Integer[]>();
+        Integer[][] groupsOfYear = new Integer[numberOfYears][];
+
+        for (int i = 0; i < numberOfYears; i++) {
+            listToAdd.clear();
+            for (Group group : groups) {
+                if (group.getYear() == i + 1) {
+                    listToAdd.add(group.getIdGroup());
+                }
+            }
+            Integer[] arrayToAdd = new Integer[listToAdd.size()];
+            for (int j = 0; j < listToAdd.size(); j++) {
+                arrayToAdd[j] = listToAdd.get(j);
+            }
+            groupsOfYear[i] = arrayToAdd;
+        }
+
+        String[] days = {"LUNI", "MARTI", "MIERCURI", "JOI", "VINERI", "SAMBATA"};
+        String[] names = {"Anul", "Spec.", "Grupa", "Sgr."};
+        String[] hours = {"8-9,50", "10-11,50", "12-13,50", "14-15,50", "16-17,50", "18-19,50", "20-21,50"};
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("OrarSt");
+
+        CellStyle style = workbook.createCellStyle();
+        HSSFFont font = workbook.createFont();
+        font.setFontName("Times New Roman");
+        font.setFontHeightInPoints((short) 10);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setWrapText(true);
+        style.setFont(font);
+
+        int numberOfColumns = names.length + days.length * hours.length;
+
+        for (int column = 0; column < numberOfColumns; column++) {
+            sheet.setColumnWidth(column, 3452);
+        }
+
+        int rowNumber = 1;
+
+        for (int year = 0; year < numberOfYears; year++) {
+            Row daysRow = sheet.createRow(rowNumber++);
+            Row hoursRow = sheet.createRow(rowNumber++);
+            for (int j = 0; j < names.length; j++) {
+                Cell cell = hoursRow.createCell(j);
+                cell.setCellStyle(style);
+                cell.setCellValue(names[j]);
+            }
+            for (int j = 0; j < HOURS * DAYS / 2; j++) {
+                Cell daysCell = daysRow.createCell(4 + j);
+                daysCell.setCellValue(days[j / 7]);
+                daysCell.setCellStyle(style);
+                Cell hoursCell = hoursRow.createCell(4 + j);
+                hoursCell.setCellValue(hours[j % 7]);
+                hoursCell.setCellStyle(style);
+            }
+            sheet.addMergedRegion(new CellRangeAddress(rowNumber - 2, rowNumber - 2, 0, 3));
+            for (int j = 0; j < 6; j++) {
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 2, rowNumber - 2, j * 7 + 4, j * 7 + 10));
+            }
+            for (int groupNo = 0; groupNo < groupsOfYear[year].length; groupNo++) {
+                for (int subRow = 0; subRow < 4; subRow++) {
+                    Group group = groups.get(groupsOfYear[year][groupNo]);
+                    Row row = sheet.createRow(rowNumber++);
+                    font.setFontHeightInPoints((short) 10);
+                    style.setFont(font);
+                    Cell c0 = row.createCell(0);
+                    c0.setCellValue(group.getYear());
+                    c0.setCellStyle(style);
+                    Cell c1 = row.createCell(1);
+                    c1.setCellValue(group.getSpeciality().toUpperCase());
+                    c1.setCellStyle(style);
+                    Cell c2 = row.createCell(2);
+                    c2.setCellValue(group.getGroupName());
+                    c2.setCellStyle(style);
+                    Cell c3 = row.createCell(3);
+                    c3.setCellStyle(style);
+                    c3.setCellValue((subRow < 2) ? "A" : "B");
+                    font.setFontHeightInPoints((short) 9);
+                    style.setFont(font);
+                    for (int column = 0; column < HOURS * DAYS / 2; column++) {
+                        int day = column / HOURS * 2 + subRow % 2;
+                        int hour = column % HOURS;
+                        String cellValue = "";
+                        if (group.getActivityGroup(semester, hour, day) >= 0) {
+                            Activity activity = activities.get(group.getActivityGroup(semester, hour, day));
+                            String professor = professors.get(activity.getProfessorId()).getShortName();
+                            String room = ((activity.getClassRoomId() == -1) ? "_" : rooms.get(activity.getClassRoomId()).getRoomName());
+                            String activityShort = activity.getCodeSubject();
+                            String activityType = activity.getTypeChar();
+                            cellValue = activityShort + "," + activityType + "," + room + ", " + professor;
+                        }
+                        Cell cell = row.createCell(column + 4);
+                        cell.setCellStyle(style);
+                        cell.setCellValue(cellValue);
+                    }
+                }
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 4, rowNumber - 1, 0, 0));
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 4, rowNumber - 1, 1, 1));
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 4, rowNumber - 1, 2, 2));
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 4, rowNumber - 3, 3, 3));
+                sheet.addMergedRegion(new CellRangeAddress(rowNumber - 2, rowNumber - 1, 3, 3));
+            }
+        }
+
+        for (int column = 0; column < 4; column++) {
+            sheet.autoSizeColumn(column);
+        }
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            workbook.write(fileOutputStream);
+            workbook.close();
+            Utility.message("Exportarea s-a terminat cu succes");
+        } catch (Exception exception) {
+            Utility.message("Exportarea datelor a eșuat");
+            return false;
+        }
+        return true;
+    }
+
+    public static IndexedLabel createGroupLabel(Activity currentActivity, Professor professor, ArrayList<Group> groups,
+                                                ArrayList<Room> rooms) {
+
+        int[] groupId = new int[groups.size()];
+
+        for (int i = 0; i < groups.size(); i++) {
+            groupId[i] = groups.get(i).getIdGroup();
         }
 
         IndexedLabel lbl = new IndexedLabel(currentActivity.getIdActivity(), professor.getIdProfessor(),groupId);
