@@ -2,6 +2,7 @@ import com.sun.javafx.stage.StageHelper;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -14,7 +15,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.SearchableComboBox;
 
-import javax.rmi.CORBA.Util;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -59,13 +59,13 @@ public class Scenes {
         return false;
     }
 
-    public static void addRoom(ArrayList<Room> rooms, ArrayList<Activity> activities) {
+    public void addRoom() {
 
-        Stage stage=new Stage();
+        Stage stage = new Stage();
         stage.setTitle("Adăugare/Ștergere sală");
 
-        GridPane gridPane=new GridPane();
-        gridPane.setPadding(new Insets(20,20,20,20));
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setVgap(10);
         gridPane.setHgap(10);
@@ -137,15 +137,15 @@ public class Scenes {
                                 }
                             }
                             rooms.remove(i);
-                            roomFound=true;
+                            roomFound = true;
                             i--;
                         }
                     }
                 }
-                roomCombo.getItems().clear();
-                for (Room room:rooms) {
-                    roomCombo.getItems().add(room.getRoomName());
-                }
+                roomCombo.getSelectionModel().clearSelection();
+                roomCombo.setValue(null);
+                roomCombo.getItems().remove(selectedRoom);
+
             }
         });
 
@@ -176,23 +176,200 @@ public class Scenes {
         });
         ta.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount()==2) {
-                    Stage stage=searchForStage(professors.get(ta.getProfessorId()).getName());
-                        if (stage==null) {
-                            professorsScheduleScene(ta.getProfessorId(), activities.get(ta.getActivityId()).getSemester());
+                if (event.getClickCount() == 2) {
+                    Stage stage = searchForStage(professors.get(ta.getProfessorId()).getName());
+                    if (stage == null) {
+                        professorsScheduleScene(ta.getProfessorId(), activities.get(ta.getActivityId()).getSemester());
+                    }
+                }
+            }
+            if (event.getButton().equals(MouseButton.SECONDARY)) {
+                changeRoom(ta);
+            }
+        });
+    }
+
+    private void changeRoom(IndexedLabel chosenLabel) {
+
+        ArrayList<Room> availableRooms = new ArrayList<>();
+        ArrayList<Integer> hours = new ArrayList<>(), days = new ArrayList<>();
+        int semester = activities.get(chosenLabel.getActivityId()).getSemester();
+        int professorId = chosenLabel.getProfessorId();
+        Professor professor = professors.get(professorId);
+        int activityId = chosenLabel.getActivityId();
+        Activity activity = activities.get(activityId);
+        int[] groupsId = chosenLabel.getGroupsId();
+
+        for (int hour = 0; hour < HOURS; hour++) {
+            for (int day = 0; day < DAYS; day++) {
+                if (professor.getActivityProfessor(semester, hour, day) == chosenLabel.getActivityId()) {
+                    hours.add(hour);
+                    days.add(day);
+                }
+            }
+        }
+
+        for (Room room : rooms) {
+            boolean ok = true;
+            for (int i = 0; i < hours.size(); i++) {
+                if (room.getActivityRoom(semester, hours.get(i), days.get(i)) != -1) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                availableRooms.add(room);
+            }
+        }
+
+        Stage stage = new Stage();
+        stage.setTitle("Alegere sală");
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+
+        Scene scene = new Scene(gridPane);
+
+        Button choose = new Button("Alege sala");
+        choose.setPrefSize(200, 30);
+
+        Label chooseRoomLabel = new Label("Alegeți sala");
+        chooseRoomLabel.setPrefSize(200, 20);
+
+        SearchableComboBox<String> roomCombo = new SearchableComboBox<>();
+        roomCombo.setPrefSize(200, 30);
+
+
+        for (Room room : availableRooms) {
+            roomCombo.getItems().add(room.getRoomName());
+        }
+
+        Button close = new Button("Închide fereastra");
+        close.setPrefSize(200, 30);
+
+        choose.setOnAction(event -> {
+            String selectedRoomName = roomCombo.getValue();
+            int selectedRoomId = -1;
+            for (Room room : rooms) {
+                if (room.getRoomName().equals(selectedRoomName)) {
+                    selectedRoomId = room.getRoomId();
+                }
+            }
+            if (selectedRoomId >= 0) {
+                activity.setClassRoomId(selectedRoomId);
+                for (int t = 0; t < hours.size(); t++) {
+                    rooms.get(selectedRoomId).setActivityRoom(semester, hours.get(t), days.get(t), activityId);
+                }
+            }
+            stage.close();
+        });
+
+        close.setOnAction(event -> stage.close());
+
+        gridPane.add(choose, 2, 2);
+        gridPane.add(chooseRoomLabel, 1, 1);
+        gridPane.add(roomCombo, 1, 2);
+        gridPane.add(close, 2, 3);
+
+        stage.setScene(scene);
+        stage.setOnCloseRequest(Event::consume);
+        stage.show();
+
+    }
+
+    public void renameGroup() {
+
+        Stage stage = new Stage();
+        stage.setTitle("Denumire grupe");
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+
+        Scene scene = new Scene(gridPane);
+
+        Button renameGroup = new Button("Schimba denumirea");
+        renameGroup.setPrefSize(200, 30);
+
+        Label chooseGroupLabel = new Label("Alegeți grupa");
+        chooseGroupLabel.setPrefSize(200, 20);
+
+        Label newNameLabel = new Label("Nume nou grupă");
+        newNameLabel.setPrefSize(200, 20);
+
+        TextField newName = new TextField();
+        newName.setPrefSize(200, 30);
+
+        SearchableComboBox<String> groupCombo = new SearchableComboBox<>();
+        groupCombo.setPrefSize(200, 30);
+        for (Group group : groups) {
+            groupCombo.getItems().add(group.getGroupName());
+        }
+
+        Button close = new Button("Închide fereastra");
+        close.setPrefSize(200, 30);
+
+        renameGroup.setOnAction(event -> {
+
+            String newGroupName = newName.getText();
+
+            if (newGroupName.trim().equals("")) {
+                Utility.message("Nume de grupă invalid");
+                newName.clear();
+            } else {
+                for (Group group : groups) {
+                    if (newGroupName.trim().equals(group.getGroupName())) {
+                        Utility.message("Nume de grupă existent");
+                        newName.clear();
+                    }
+                }
+            }
+            if (!newName.getText().isEmpty()) {
+                String nameToChange = groupCombo.getValue();
+                if (nameToChange.isEmpty()) {
+                    Utility.message("Nu este selectată nici o grupă");
+                } else {
+                    for (Group group : groups) {
+                        if (group.getGroupName().equals(nameToChange)) {
+                            group.setGroupName(newGroupName);
+                            break;
                         }
+                    }
+                    groupCombo.getItems().clear();
+                    for (Group group : groups) {
+                        groupCombo.getItems().add(group.getGroupName());
+                    }
                 }
             }
         });
+
+        close.setOnAction(event -> stage.close());
+
+        gridPane.add(chooseGroupLabel, 1, 1);
+        gridPane.add(newNameLabel, 2, 1);
+        gridPane.add(groupCombo, 1, 2);
+        gridPane.add(newName, 2, 2);
+        gridPane.add(renameGroup, 2, 3);
+        gridPane.add(close, 2, 4);
+
+        stage.setScene(scene);
+        stage.setOnCloseRequest(Event::consume);
+        stage.show();
+
     }
 
     public void professorsScheduleScene(int professorId, int semester) {
 
         Professor professor = professors.get(professorId);
-        Stage scheduleStage=new Stage();
-        HBox horizontalBox=new HBox();
-        GridPane classesGrid=new GridPane();
-        GridPane scheduleGrid=new GridPane();
+        Stage scheduleStage = new Stage();
+        HBox horizontalBox = new HBox();
+        GridPane classesGrid = new GridPane();
+        GridPane scheduleGrid = new GridPane();
         StackPane[][] scheduleMatrix=new StackPane[HOURS+1][DAYS+1];
 
         String[] ore={"Zi \\ Ora","8-9,50","10-11,50","12-13,50","14-15,50","16-17,50","18-19,50","20-21,50"};
@@ -281,18 +458,31 @@ public class Scenes {
             classesGrid.add(pane, i % sqr, i / sqr);
         }
 
-        horizontalBox.getChildren().addAll(scheduleGrid,classesGrid);
-        horizontalBox.setPadding(new Insets(20,20,20,20));
+        horizontalBox.getChildren().addAll(scheduleGrid, classesGrid);
+        horizontalBox.setPadding(new Insets(20, 20, 20, 20));
         horizontalBox.setAlignment(Pos.CENTER);
         horizontalBox.setSpacing(20);
-        Scene scheduleScene=new Scene(horizontalBox);
+        Scene scheduleScene = new Scene(horizontalBox);
         scheduleStage.setScene(scheduleScene);
-        scheduleStage.setTitle(professor.getName()+" semestrul "+semester);
+        scheduleStage.setTitle(professor.getName() + " semestrul " + semester);
         scheduleStage.show();
 
-        scheduleScene.setOnKeyTyped(event -> {
-            if (event.getCharacter().equals("m")) {
+        scheduleScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
                 searchForStage("Meniu principal").toFront();
+            }
+            if (event.getCode() == KeyCode.TAB) {
+                synchronized (this) {
+                    SortedList<Stage> stages = StageHelper.getStages().sorted();
+                    for (int i = 0; i < stages.size(); i++) {
+                        if (stages.get(i).equals(scheduleStage)) {
+                            if (stages.get((i + 1) % stages.size()).getTitle().equals("Meniu principal"))
+                                i++;
+                            stages.get((i + 1) % stages.size()).toFront();
+                            break;
+                        }
+                    }
+                }
             }
         });
     }
@@ -727,18 +917,31 @@ public class Scenes {
             classesGrid.add(pane, i % sqr, i / sqr);
         }
 
-        horizontalBox.getChildren().addAll(scheduleGrid,classesGrid);
-        horizontalBox.setPadding(new Insets(20,20,20,20));
+        horizontalBox.getChildren().addAll(scheduleGrid, classesGrid);
+        horizontalBox.setPadding(new Insets(20, 20, 20, 20));
         horizontalBox.setAlignment(Pos.CENTER);
         horizontalBox.setSpacing(20);
-        Scene scheduleScene=new Scene(horizontalBox);
+        Scene scheduleScene = new Scene(horizontalBox);
         scheduleStage.setScene(scheduleScene);
-        scheduleStage.setTitle("Orar grupa "+group.getGroupName()+" semestrul "+semester);
+        scheduleStage.setTitle("Orar grupa " + group.getGroupName() + " semestrul " + semester);
         scheduleStage.show();
 
-        scheduleScene.setOnKeyTyped(event -> {
-            if (event.getCharacter().equals("m")) {
+        scheduleScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
                 searchForStage("Meniu principal").toFront();
+            }
+            if (event.getCode() == KeyCode.TAB) {
+                synchronized (this) {
+                    SortedList<Stage> stages = StageHelper.getStages().sorted();
+                    for (int i = 0; i < stages.size(); i++) {
+                        if (stages.get(i).equals(scheduleStage)) {
+                            if (stages.get((i + 1) % stages.size()).getTitle().equals("Meniu principal"))
+                                i++;
+                            stages.get((i + 1) % stages.size()).toFront();
+                            break;
+                        }
+                    }
+                }
             }
         });
 
@@ -1287,15 +1490,28 @@ public class Scenes {
         headerScroll.hvalueProperty().bindBidirectional(scheduleScroll.hvalueProperty());
         leftScroll.vvalueProperty().bindBidirectional(scheduleScroll.vvalueProperty());
 
-        Scene scheduleScene=new Scene(windowGrid);
+        Scene scheduleScene = new Scene(windowGrid);
         scheduleScroll.autosize();
         scheduleStage.setScene(scheduleScene);
-        scheduleStage.setTitle("Orar anul "+year+" semestrul "+semester);
+        scheduleStage.setTitle("Orar anul " + year + " semestrul " + semester);
         scheduleStage.show();
 
-        scheduleScene.setOnKeyTyped(event -> {
-            if (event.getCharacter().equals("m")) {
+        scheduleScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
                 searchForStage("Meniu principal").toFront();
+            }
+            if (event.getCode() == KeyCode.TAB) {
+                synchronized (this) {
+                    SortedList<Stage> stages = StageHelper.getStages().sorted();
+                    for (int i = 0; i < stages.size(); i++) {
+                        if (stages.get(i).equals(scheduleStage)) {
+                            if (stages.get((i + 1) % stages.size()).getTitle().equals("Meniu principal"))
+                                i++;
+                            stages.get((i + 1) % stages.size()).toFront();
+                            break;
+                        }
+                    }
+                }
             }
         });
 
